@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.1](https://github.com/virgoone/lark-cli-service/compare/v1.0.0...v1.0.1) (2020-04-03)
+
+
+### Features
+
+* add npmrc ([02f2697](https://github.com/virgoone/lark-cli-service/commit/02f2697a1f5ff92098631d446984c8daa2cbd5af))
+
+
+### Bug Fixes
+
+* variables ([4f78b2b](https://github.com/virgoone/lark-cli-service/commit/4f78b2b122273ad3a81ded3ea62ace33ccf9d999))
+
 ## 1.0.0 (2020-03-18)
 
 

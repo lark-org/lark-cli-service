@@ -1,6 +1,6 @@
 {
   "name": "@virgoone/lark-cli-service",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "main": "./src/index.js",
   "bin": {
@@ -10,7 +10,7 @@
     "release": "standard-version"
   },
   "publishConfig": {
-    "registry":"https://npm.pkg.github.com/"
+    "registry": "https://npm.pkg.github.com/"
   },
   "dependencies": {
     "@babel/cli": "7.5.5",
