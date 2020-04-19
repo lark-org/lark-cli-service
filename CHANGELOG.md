@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.4](https://github.com/virgoone/lark-cli-service/compare/v1.0.3...v1.0.4) (2020-04-19)
+
+
+### Bug Fixes
+
+* custom config name ([760b171](https://github.com/virgoone/lark-cli-service/commit/760b171daefe719c66b796a8f96f2de086b9aca1))
+
 ### [1.0.3](https://github.com/virgoone/lark-cli-service/compare/v1.0.2...v1.0.3) (2020-04-19)
 
 
