@@ -11,7 +11,7 @@ const getCustomConfig = () => {
     return customConfig
   }
 
-  const llsConfig = getProjectFilePath('vira.config.js')
+  const llsConfig = getProjectFilePath('lark.config.js')
   try {
     fs.accessSync(llsConfig, fs.constants.F_OK | fs.constants.R_OK)
     customConfig = Object.assign({}, defaultConfig, require(llsConfig))
