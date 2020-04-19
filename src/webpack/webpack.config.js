@@ -42,7 +42,6 @@ function getStyleLoaders (external) {
           // see https://github.com/webpack-contrib/css-loader/issues/613
           sourceMap: false,
           importLoaders: 1,
-          minimize: !__DEV__,
           ...modulesQuery,
         },
       },
