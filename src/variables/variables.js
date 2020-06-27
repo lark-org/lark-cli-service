@@ -8,7 +8,7 @@ if (!process.env.APP_ENV) {
 const { APP_ENV } = process.env
 const APP_NAME = require(require.resolve(getProjectFilePath('package.json')))
   .name
-let PUBLIC_PATH = '/'
+const PUBLIC_PATH = '/'
 let GIT_COMMIT_SHA = 'N/A'
 let __DEV__ = process.env.NODE_ENV === 'development'
 

@@ -1,7 +1,6 @@
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
-const WebpackSentryPlugin = require('@sentry/webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const safePostCssParser = require('postcss-safe-parser')
@@ -21,13 +20,6 @@ module.exports = () =>
         new SourceMapDevToolPlugin({
           filename: '[file].map',
           publicPath: PUBLIC_PATH,
-        }),
-        new WebpackSentryPlugin({
-          // Sentry options are required
-          include: 'dist',
-          ignore: ['node_modules'],
-          release: SENTRY_RELEASE,
-          urlPrefix: PUBLIC_PATH,
         }),
         new MiniCssExtractPlugin({
           // Options similar to the same options in webpackOptions.output
