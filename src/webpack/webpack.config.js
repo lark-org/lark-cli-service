@@ -185,6 +185,14 @@ module.exports = ({ entry = [], plugins = [] }) => {
           test: /\.(css|s[ac]ss|less)$/,
           exclude: [appSrc],
           use: getStyleLoaders(true)
+        },
+        {
+          test: /\.(png|jpg|svg|gif)$/,
+          type: 'asset/resource',
+          generator: {
+            // [ext]前面自带"."
+            filename: 'assets/[hash:8].[name][ext]'
+          }
         }
       ]
     },
