@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 process.env.NODE_ENV = 'development'
 process.env.BABEL_ENV = 'development'
 
@@ -7,7 +8,7 @@ const clearConsole = require('react-dev-utils/clearConsole')
 const {
   choosePort,
   createCompiler,
-  prepareUrls,
+  prepareUrls
 } = require('react-dev-utils/WebpackDevServerUtils')
 const configFactory = require('../webpack/webpack.config.dev')
 const { APP_NAME: appName } = require('../variables/variables')
@@ -26,9 +27,10 @@ module.exports = async (defaultPort) => {
     const urls = prepareUrls('http', host, port)
     const config = configFactory()
     const devSocket = {
-      warnings: warnings =>
+      warnings: (warnings) =>
         devServer.sockWrite(devServer.sockets, 'warnings', warnings),
-      errors: errors => devServer.sockWrite(devServer.sockets, 'errors', errors),
+      errors: (errors) =>
+        devServer.sockWrite(devServer.sockets, 'errors', errors)
     }
     const compiler = createCompiler({
       appName,
@@ -36,12 +38,12 @@ module.exports = async (defaultPort) => {
       devSocket,
       urls,
       useYarn: true,
-      webpack,
+      webpack
     })
     const devServer = new WebpackDevServer(compiler, config.devServer)
 
     // Launch WebpackDevServer.
-    devServer.listen(port, host, err => {
+    devServer.listen(port, host, (err) => {
       if (err) {
         console.log(err)
 
@@ -51,8 +53,7 @@ module.exports = async (defaultPort) => {
         clearConsole()
       }
     })
-
-    ;['SIGINT', 'SIGTERM'].forEach(sig => {
+    ;['SIGINT', 'SIGTERM'].forEach((sig) => {
       process.on(sig, () => {
         devServer.close()
         process.exit()

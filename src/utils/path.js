@@ -1,7 +1,8 @@
 const path = require('path')
 
-const getProjectFilePath = relativePath => path.resolve(process.cwd(), relativePath)
+const getProjectFilePath = (relativePath) =>
+  path.resolve(process.cwd(), relativePath)
 
 module.exports = {
-  getProjectFilePath,
+  getProjectFilePath
 }

@@ -6,8 +6,8 @@ const { depsWereOk, error } = checkDeps.sync()
 if (!depsWereOk) {
   ;[
     ...error.slice(0, -1),
-    `Invoke ${chalk.green('yarn')} to sync local dependencies`,
-  ].forEach(e => {
+    `Invoke ${chalk.green('yarn')} to sync local dependencies`
+  ].forEach((e) => {
     console.log(e)
     console.log()
   })

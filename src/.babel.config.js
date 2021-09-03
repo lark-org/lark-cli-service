@@ -5,7 +5,7 @@ const path = require('path')
 
 // TODO: 作为一个 preset 的方式大概会更好
 
-module.exports = api => {
+module.exports = (api) => {
   const projectBabelPath = getProjectFilePath('.babel.config.js')
 
   let customBabelConfig = {}
@@ -20,8 +20,8 @@ module.exports = api => {
     root: [path.relative(__dirname, process.cwd())],
     extensions: ['.js', '.jsx', '.tsx', '.ts'],
     alias: {
-      '@': './src',
-    },
+      '@': './src'
+    }
   }
 
   let environment = []
@@ -32,7 +32,7 @@ module.exports = api => {
     environment = [
       '@babel/plugin-syntax-dynamic-import',
       'babel-plugin-transform-react-remove-prop-types',
-      '@babel/plugin-transform-react-constant-elements',
+      '@babel/plugin-transform-react-constant-elements'
     ]
   }
 
@@ -40,7 +40,7 @@ module.exports = api => {
     presets: [
       ['@babel/preset-env'],
       '@babel/preset-react',
-      '@babel/preset-typescript',
+      '@babel/preset-typescript'
     ],
     plugins: [
       ...environment,
@@ -49,8 +49,8 @@ module.exports = api => {
       ['@babel/plugin-proposal-decorators', { legacy: true }],
       '@babel/plugin-proposal-class-properties',
       'babel-plugin-macros',
-      '@babel/plugin-transform-runtime',
-    ],
+      '@babel/plugin-transform-runtime'
+    ]
   }
 
   return merge(config, customBabelConfig)
