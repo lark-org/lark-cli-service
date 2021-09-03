@@ -1,14 +1,15 @@
-function getHtmlWebpackOptions (pluginArgs) {
+/* eslint-disable */
+function getHtmlWebpackOptions(pluginArgs) {
   return pluginArgs && pluginArgs.plugin && pluginArgs.plugin.options
     ? pluginArgs.plugin.options
     : {}
 }
 
-function getCompilationOptions (compilation) {
+function getCompilationOptions(compilation) {
   return compilation && compilation.options ? compilation.options : {}
 }
 
-function getPublicPath ({ compilationOptions }) {
+function getPublicPath({ compilationOptions }) {
   const { output } = compilationOptions
 
   if (output && output.publicPath) {
@@ -16,7 +17,7 @@ function getPublicPath ({ compilationOptions }) {
   }
 }
 
-function getResourceName (options, tag) {
+function getResourceName(options, tag) {
   let name = tag.attributes && tag.attributes.href
   const publicPath = getPublicPath(options)
 
@@ -33,13 +34,13 @@ function getResourceName (options, tag) {
   return name
 }
 
-function applyCustomAttribute (options, tag) {
+function applyCustomAttribute(options, tag) {
   const { custom = [] } = options
   const name = getResourceName(options, tag)
   const alter = { ...tag }
 
   if (name && tag.tagName === 'link') {
-    custom.forEach(option => {
+    custom.forEach((option) => {
       if (name.match(option.test)) {
         if (!alter.attributes) {
           alter.attributes = {}
@@ -53,9 +54,9 @@ function applyCustomAttribute (options, tag) {
 }
 
 module.exports = class StyleExtHtmlWebpackPlugin {
-  constructor (HtmlWebpackPlugin, options = {}) {
+  constructor(HtmlWebpackPlugin, options = {}) {
     this.options = options
-    this.compilationCallback = compilation => {
+    this.compilationCallback = (compilation) => {
       HtmlWebpackPlugin.getHooks(compilation).alterAssetTags.tap(
         'StyleExtHtmlWebpackPlugin',
         this.alterAssetTagsCallback.bind(this, compilation)
@@ -68,11 +69,11 @@ module.exports = class StyleExtHtmlWebpackPlugin {
       const options = {
         ...this.options,
         htmlWebpackOptions,
-        compilationOptions,
+        compilationOptions
       }
 
       if (custom.length) {
-        pluginArgs.assetTags.styles.forEach(tag => {
+        pluginArgs.assetTags.styles.forEach((tag) => {
           applyCustomAttribute(options, tag)
         })
       }
@@ -82,7 +83,8 @@ module.exports = class StyleExtHtmlWebpackPlugin {
       }
     }
   }
-  apply (compiler) {
+
+  apply(compiler) {
     compiler.hooks.compilation.tap(
       'StyleExtHtmlWebpackPlugin',
       this.compilationCallback

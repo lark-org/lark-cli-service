@@ -1,31 +1,13 @@
+/* eslint-disable promise/always-return */
 process.env.NODE_ENV = 'production'
 process.env.BABEL_ENV = 'production'
 process.env.CI = false
 
-if (process.env.FAAS_CONFIG_ENV) {
-  let env = process.env.FAAS_CONFIG_ENV
-
-  if (env.indexOf('production') >= 0) {
-    if (env.indexOf('pre-production') >= 0) {
-      env = 'pre_prod'
-    } else {
-      env = 'production'
-    }
-  } else if (env.indexOf('feat') >= 0) {
-    env = 'feature'
-  } else if (env.indexOf('staging') >= 0) {
-    env = 'staging'
-  } else {
-    env = 'develop'
-  }
-
-  process.env.APP_ENV = env
-}
 if (!process.env.APP_ENV) {
   process.env.APP_ENV = 'production'
 }
 
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err) => {
   throw err
 })
 
@@ -38,15 +20,13 @@ const printBuildError = require('react-dev-utils/printBuildError')
 const configFactory = require('../webpack/webpack.config.build')
 const { appBuild, appPublic, appHtml } = require('../variables/paths')
 
-const {
-  measureFileSizesBeforeBuild,
-  printFileSizesAfterBuild,
-} = FileSizeReporter
+const { measureFileSizesBeforeBuild, printFileSizesAfterBuild } =
+  FileSizeReporter
 
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 512 * 1024
 const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024
 
-function build (previousFileSizes) {
+function build(previousFileSizes) {
   console.log(`${chalk.green('Environment:')} ${process.env.APP_ENV}`)
   console.log()
   console.log('Creating an optimized production build...')
@@ -65,7 +45,7 @@ function build (previousFileSizes) {
         }
         messages = formatWebpackMessages({
           errors: [err.message],
-          warnings: [],
+          warnings: []
         })
       } else {
         messages = formatWebpackMessages(
@@ -90,7 +70,7 @@ function build (previousFileSizes) {
         console.log(
           chalk.yellow(
             '\nTreating warnings as errors because process.env.CI = true.\n' +
-            'Most CI servers set it automatically.\n'
+              'Most CI servers set it automatically.\n'
           )
         )
 
@@ -100,24 +80,24 @@ function build (previousFileSizes) {
       return resolve({
         stats,
         previousFileSizes,
-        warnings: messages.warnings,
+        warnings: messages.warnings
       })
     })
   })
 }
 
-function copyPublicFolder () {
+function copyPublicFolder() {
   fs.copySync(appPublic, appBuild, {
     dereference: true,
-    filter: file => file !== appHtml,
+    filter: (file) => file !== appHtml
   })
 }
 
 module.exports = () => {
   measureFileSizesBeforeBuild(appBuild)
-    .then(previousFileSizes => {
-    // Remove all content but keep the directory so that
-    // if you're in it, you don't end up in Trash
+    .then((previousFileSizes) => {
+      // Remove all content but keep the directory so that
+      // if you're in it, you don't end up in Trash
       fs.emptyDirSync(appBuild)
       // Merge with the public folder
       copyPublicFolder()
@@ -153,13 +133,13 @@ module.exports = () => {
         )
         console.log()
       },
-      err => {
+      (err) => {
         console.log(chalk.red('Failed to compile.\n'))
         printBuildError(err)
         process.exit(1)
       }
     )
-    .catch(err => {
+    .catch((err) => {
       if (err && err.message) {
         console.log(err.message)
       }

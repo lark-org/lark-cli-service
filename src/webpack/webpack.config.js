@@ -13,18 +13,18 @@ const stringified = Object.keys(variables).reduce(
     return acc
   },
   {
-    'process.env.APP_ENV': JSON.stringify(APP_ENV),
+    'process.env.APP_ENV': JSON.stringify(APP_ENV)
   }
 )
 
-function getStyleLoaders (external) {
-  function getLoaders (modules, useable) {
+function getStyleLoaders(external) {
+  function getLoaders(modules, useable) {
     let modulesQuery
 
     if (modules) {
       modulesQuery = {
         modules: true,
-        localIdentName: '[name]--[local]-[hash:base64:5]',
+        localIdentName: '[name]--[local]-[hash:base64:5]'
       }
     }
 
@@ -33,8 +33,8 @@ function getStyleLoaders (external) {
       useable
         ? 'style-loader/useable'
         : __DEV__
-          ? 'style-loader'
-          : MiniCssExtractPlugin.loader,
+        ? 'style-loader'
+        : MiniCssExtractPlugin.loader,
       {
         loader: 'css-loader',
         options: {
@@ -42,17 +42,17 @@ function getStyleLoaders (external) {
           // see https://github.com/webpack-contrib/css-loader/issues/613
           sourceMap: false,
           importLoaders: 1,
-          ...modulesQuery,
-        },
+          ...modulesQuery
+        }
       },
       {
         loader: 'postcss-loader',
         options: {
           // turn on sourceMap will cause FOUC
           // see https://github.com/webpack-contrib/css-loader/issues/613
-          sourceMap: false,
-        },
-      },
+          sourceMap: false
+        }
+      }
     ]
   }
 
@@ -60,15 +60,15 @@ function getStyleLoaders (external) {
     return [
       {
         resourceQuery: /modules/,
-        use: getLoaders(true),
+        use: getLoaders(true)
       },
       {
         resourceQuery: /useable/,
-        use: getLoaders(false, true),
+        use: getLoaders(false, true)
       },
       {
-        use: getLoaders(),
-      },
+        use: getLoaders()
+      }
     ]
   }
 
@@ -89,7 +89,7 @@ module.exports = ({ entry = [], plugins = [] }) => {
       keepClosingSlash: true,
       minifyJS: true,
       minifyCSS: true,
-      minifyURLs: true,
+      minifyURLs: true
     }
   }
 
@@ -99,8 +99,9 @@ module.exports = ({ entry = [], plugins = [] }) => {
     resolve: {
       alias: {
         '@': appSrc,
+        src: appSrc
       },
-      extensions: ['.ts', '.tsx', '.jsx', '.js', '.scss'],
+      extensions: ['.ts', '.tsx', '.jsx', '.js', '.scss', '*.less']
     },
     module: {
       strictExportPresence: true,
@@ -111,8 +112,8 @@ module.exports = ({ entry = [], plugins = [] }) => {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            name: 'assets/[name].[hash:6].[ext]',
-          },
+            name: 'assets/[name].[hash:6].[ext]'
+          }
         },
         {
           test: /\.(js|jsx|ts|tsx)$/,
@@ -121,8 +122,8 @@ module.exports = ({ entry = [], plugins = [] }) => {
           options: {
             cacheDirectory: false,
             highlightCode: true,
-            configFile: require.resolve('../.babel.config.js'),
-          },
+            configFile: require.resolve('../.babel.config.js')
+          }
         },
         {
           test: /\.wjs$/,
@@ -133,17 +134,17 @@ module.exports = ({ entry = [], plugins = [] }) => {
               options: {
                 inline: true,
                 fallback: false,
-                publicPath: '/workers/',
-              },
+                publicPath: '/workers/'
+              }
             },
             {
               loader: 'babel-loader',
               options: {
                 cacheDirectory: false,
-                highlightCode: true,
-              },
-            },
-          ],
+                highlightCode: true
+              }
+            }
+          ]
         },
         {
           test: /\.s[ac]ss$/,
@@ -155,10 +156,10 @@ module.exports = ({ entry = [], plugins = [] }) => {
               options: {
                 // turn on sourceMap will cause FOUC
                 // see https://github.com/webpack-contrib/css-loader/issues/613
-                sourceMap: false,
-              },
-            },
-          ],
+                sourceMap: false
+              }
+            }
+          ]
         },
         {
           test: /\.less$/,
@@ -170,32 +171,32 @@ module.exports = ({ entry = [], plugins = [] }) => {
               options: {
                 sourceMap: false,
                 globalVars: { theme: 'vira' },
-                paths: ['node_modules'],
-              },
-            },
-          ],
+                paths: ['node_modules']
+              }
+            }
+          ]
         },
         {
           test: /\.(css|s[ac]ss|less)$/,
           include: [appSrc],
-          oneOf: getStyleLoaders(),
+          oneOf: getStyleLoaders()
         },
         {
           test: /\.(css|s[ac]ss|less)$/,
           exclude: [appSrc],
-          use: getStyleLoaders(true),
-        },
-      ],
+          use: getStyleLoaders(true)
+        }
+      ]
     },
     plugins: [
       new HtmlWebpackPlugin({
         template: appHtml,
         inject: __DEV__ ? 'body' : 'head',
-        minify,
+        minify
       }),
       new webpack.DefinePlugin(stringified),
       new InterpolateHtmlPlugin(HtmlWebpackPlugin, variables),
-      ...plugins,
-    ].filter(Boolean),
+      ...plugins
+    ].filter(Boolean)
   }
 }

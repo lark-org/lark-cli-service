@@ -6,13 +6,16 @@ if (!process.env.APP_ENV) {
 }
 
 const { APP_ENV } = process.env
-const APP_NAME = require(require.resolve(getProjectFilePath('package.json')))
-  .name
+// eslint-disable-next-line import/no-dynamic-require
+const package = require(require.resolve(getProjectFilePath('package.json')))
+const { name: APP_NAME, version: VERSION } = package
 const PUBLIC_PATH = '/'
+// eslint-disable-next-line no-underscore-dangle
+const __DEV__ = process.env.NODE_ENV === 'development'
 let GIT_COMMIT_SHA = 'N/A'
-let __DEV__ = process.env.NODE_ENV === 'development'
 
 try {
+  // eslint-disable-next-line global-require
   GIT_COMMIT_SHA = require('child_process')
     .execSync('git rev-parse HEAD')
     .toString()
@@ -22,20 +25,24 @@ try {
 }
 
 const customVariables = getCustomConfig().variables
+const RELEASE = GIT_COMMIT_SHA.substr(0, 7)
 
 const variables = {
   __DEV__,
   GIT_COMMIT_SHA,
-  SENTRY_RELEASE: `${APP_ENV}-${GIT_COMMIT_SHA.substr(0, 7)}`,
+  RELEASE,
+  VERSION,
+  SENTRY_RELEASE: `${APP_ENV}-${RELEASE}`,
   APP_ENV,
   APP_NAME,
   PUBLIC_PATH,
-  ...customVariables,
+  ...customVariables
 }
 
 const requiredVariableKeys = ['APP_TITLE']
 
 if (!__DEV__) {
+  // eslint-disable-next-line no-restricted-syntax
   for (const requiredKey of requiredVariableKeys) {
     if (!variables[requiredKey]) {
       throw new Error(`please config required variable: ${requiredKey}`)
