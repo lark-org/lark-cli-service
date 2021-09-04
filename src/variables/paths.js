@@ -1,6 +1,11 @@
-const { getProjectFilePath } = require('../utils/path')
+const { getProjectFilePath, resolveApp } = require('../utils/path')
 const { getCustomConfig } = require('../utils/custom-config')
 
+const appPath = resolveApp('.')
+const appTsConfig = resolveApp('tsconfig.json')
+const appJsConfig = resolveApp('jsconfig.json')
+const appNodeModules = resolveApp('node_modules')
+const appWebpackCache = resolveApp('node_modules/.cache')
 const appSrc = getProjectFilePath('./src')
 const appBuild = getProjectFilePath('./dist')
 const appPublic = getProjectFilePath('./public')
@@ -14,6 +19,7 @@ const appHtml = getProjectFilePath('./src/index.html')
 const customPaths = getCustomConfig().paths
 
 const paths = {
+  appPath,
   appIndex,
   appSrc,
   appBuild,
@@ -22,6 +28,10 @@ const paths = {
   appPolyfill,
   yarnLockFile,
   appPackageJson,
+  appTsConfig,
+  appJsConfig,
+  appWebpackCache,
+  appNodeModules,
   ...customPaths
 }
 
