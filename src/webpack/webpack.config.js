@@ -1,9 +1,11 @@
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const fs = require('fs-extra')
 const InterpolateHtmlPlugin = require('../webpack-plugins/interpolate-html-plugin')
 const { appIndex, appSrc, appHtml, appPolyfill } = require('../variables/paths')
 const variables = require('../variables/variables')
+const paths = require('../variables/paths')
 
 const { __DEV__, PUBLIC_PATH: publicPath, APP_ENV } = variables
 const stringified = Object.keys(variables).reduce(
@@ -195,6 +197,19 @@ module.exports = ({ entry = [], plugins = [] }) => {
           }
         }
       ]
+    },
+    cache: {
+      type: 'filesystem',
+      version: APP_ENV,
+      cacheDirectory: paths.appWebpackCache,
+      store: 'pack',
+      buildDependencies: {
+        defaultWebpack: ['webpack/lib/'],
+        config: [__filename],
+        tsconfig: [paths.appTsConfig, paths.appJsConfig].filter((f) =>
+          fs.existsSync(f)
+        )
+      }
     },
     plugins: [
       new HtmlWebpackPlugin({
