@@ -1,5 +1,5 @@
 const fs = require('fs')
-const mergeWebpackConfig = require('webpack-merge')
+const { merge: mergeWebpackConfig } = require('webpack-merge')
 const { getProjectFilePath } = require('./path')
 
 let customConfig = null
@@ -11,12 +11,12 @@ const getCustomConfig = () => {
     return customConfig
   }
 
-  const llsConfig = getProjectFilePath('lark.config.js')
+  const larkConfig = getProjectFilePath('lark.config.js')
   try {
     // eslint-disable-next-line no-bitwise
-    fs.accessSync(llsConfig, fs.constants.F_OK | fs.constants.R_OK)
+    fs.accessSync(larkConfig, fs.constants.F_OK | fs.constants.R_OK)
     // eslint-disable-next-line
-    customConfig = { ...defaultConfig, ...require(llsConfig) }
+    customConfig = { ...defaultConfig, ...require(larkConfig) }
   } catch (e) {
     if (e.code === 'ENOENT') {
       // 文件不存在，使用默认配置

@@ -211,6 +211,9 @@ module.exports = ({ entry = [], plugins = [] }) => {
         )
       }
     },
+    stats: {
+      errorDetails: true
+    },
     plugins: [
       new HtmlWebpackPlugin({
         template: appHtml,
