@@ -90,6 +90,6 @@
     "lint-staged": "^11.1.2",
     "prettier": "^2.4.0",
     "standard-version": "7.1.0",
-    "typescript": "^4.4.2"
+    "typescript": "^4.4.3"
   }
 }
