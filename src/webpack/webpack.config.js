@@ -1,7 +1,15 @@
+/* eslint-disable global-require */
 const webpack = require('webpack')
+const resolve = require('resolve')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 const fs = require('fs-extra')
+const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent')
+const typescriptFormatter = require('react-dev-utils/typescriptFormatter')
+const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin')
+const postcssNormalize = require('postcss-normalize')
+
 const InterpolateHtmlPlugin = require('../webpack-plugins/interpolate-html-plugin')
 const { appIndex, appSrc, appHtml, appPolyfill } = require('../variables/paths')
 const variables = require('../variables/variables')
@@ -18,63 +26,73 @@ const stringified = Object.keys(variables).reduce(
     'process.env.APP_ENV': JSON.stringify(APP_ENV)
   }
 )
+const imageInlineSizeLimit = parseInt(
+  process.env.IMAGE_INLINE_SIZE_LIMIT || '10000',
+  10
+)
+const cssRegex = /\.css$/
+const cssModuleRegex = /\.module\.css$/
+const sassRegex = /\.(scss|sass)$/
+const sassModuleRegex = /\.module\.(scss|sass)$/
 
-function getStyleLoaders(external) {
-  function getLoaders(modules, useable) {
-    let modulesQuery
+const useTypeScript = fs.existsSync(paths.appTsConfig)
 
-    if (modules) {
-      modulesQuery = {
-        modules: true,
-        localIdentName: '[name]--[local]-[hash:base64:5]'
+function getStyleLoaders(cssOptions, preProcessor) {
+  const loaders = [
+    // eslint-disable-next-line no-nested-ternary
+    __DEV__ ? require.resolve('style-loader') : MiniCssExtractPlugin.loader,
+    {
+      loader: require.resolve('css-loader'),
+      options: {
+        // turn on sourceMap will cause FOUC
+        // see https://github.com/webpack-contrib/css-loader/issues/613
+        sourceMap: false,
+        importLoaders: 1,
+        ...cssOptions
       }
-    }
-
-    return [
-      // eslint-disable-next-line no-nested-ternary
-      useable
-        ? 'style-loader/useable'
-        : __DEV__
-        ? 'style-loader'
-        : MiniCssExtractPlugin.loader,
-      {
-        loader: 'css-loader',
-        options: {
-          // turn on sourceMap will cause FOUC
-          // see https://github.com/webpack-contrib/css-loader/issues/613
-          sourceMap: false,
-          importLoaders: 1,
-          ...modulesQuery
-        }
-      },
-      {
-        loader: 'postcss-loader',
-        options: {
-          // turn on sourceMap will cause FOUC
-          // see https://github.com/webpack-contrib/css-loader/issues/613
+    },
+    {
+      loader: require.resolve('postcss-loader'),
+      options: {
+        // Necessary for external CSS imports to work
+        // https://github.com/facebook/create-react-app/issues/2677
+        postcssOptions: {
+          plugins: () => [
+            require('postcss-flexbugs-fixes'),
+            require('postcss-preset-env')({
+              autoprefixer: {
+                flexbox: 'no-2009'
+              },
+              stage: 3
+            }),
+            // Adds PostCSS Normalize as the reset css with default options,
+            // so that it honors browserslist config in package.json
+            // which in turn let's users customize the target behavior as per their needs.
+            postcssNormalize()
+          ],
           sourceMap: false
         }
       }
-    ]
-  }
+    }
+  ].filter(Boolean)
 
-  if (!external) {
-    return [
+  if (preProcessor) {
+    loaders.push(
       {
-        resourceQuery: /modules/,
-        use: getLoaders(true)
+        loader: require.resolve('resolve-url-loader'),
+        options: {
+          root: paths.appSrc
+        }
       },
       {
-        resourceQuery: /useable/,
-        use: getLoaders(false, true)
-      },
-      {
-        use: getLoaders()
+        loader: require.resolve(preProcessor),
+        options: {
+          sourceMap: true
+        }
       }
-    ]
+    )
   }
-
-  return getLoaders()
+  return loaders
 }
 
 module.exports = ({ entry = [], plugins = [] }) => {
@@ -82,7 +100,7 @@ module.exports = ({ entry = [], plugins = [] }) => {
 
   if (!__DEV__) {
     minify = {
-      removeComments: false,
+      removeComments: true,
       collapseWhitespace: true,
       removeRedundantAttributes: true,
       useShortDoctype: true,
@@ -97,7 +115,9 @@ module.exports = ({ entry = [], plugins = [] }) => {
 
   return {
     entry: [...entry, appPolyfill, appIndex],
-    output: { publicPath },
+    output: {
+      publicPath
+    },
     resolve: {
       alias: {
         '@': appSrc,
@@ -108,19 +128,19 @@ module.exports = ({ entry = [], plugins = [] }) => {
     module: {
       strictExportPresence: true,
       rules: [
-        { parser: { requireEnsure: false } },
         {
-          test: /\.(svg|png|jpe?g|ttf|eot|woff|woff2|gif)$/,
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            name: 'assets/[name].[hash:6].[ext]'
+          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+          type: 'asset',
+          parser: {
+            dataUrlCondition: {
+              maxSize: imageInlineSizeLimit
+            }
           }
         },
         {
           test: /\.(js|jsx|ts|tsx)$/,
           include: [appSrc],
-          loader: 'babel-loader',
+          loader: require.resolve('babel-loader'),
           options: {
             cacheDirectory: false,
             highlightCode: true,
@@ -132,7 +152,7 @@ module.exports = ({ entry = [], plugins = [] }) => {
           include: [appSrc],
           use: [
             {
-              loader: 'worker-loader',
+              loader: require.resolve('worker-loader'),
               options: {
                 inline: true,
                 fallback: false,
@@ -140,7 +160,7 @@ module.exports = ({ entry = [], plugins = [] }) => {
               }
             },
             {
-              loader: 'babel-loader',
+              loader: require.resolve('babel-loader'),
               options: {
                 cacheDirectory: false,
                 highlightCode: true
@@ -148,53 +168,77 @@ module.exports = ({ entry = [], plugins = [] }) => {
             }
           ]
         },
+
         {
-          test: /\.s[ac]ss$/,
-          enforce: 'pre',
-          include: [appSrc],
-          use: [
-            {
-              loader: 'sass-loader',
-              options: {
-                // turn on sourceMap will cause FOUC
-                // see https://github.com/webpack-contrib/css-loader/issues/613
-                sourceMap: false
-              }
+          test: cssRegex,
+          exclude: cssModuleRegex,
+          use: getStyleLoaders({
+            importLoaders: 1,
+            modules: {
+              mode: 'icss'
             }
-          ]
+          }),
+          // Don't consider CSS imports dead code even if the
+          // containing package claims to have no side effects.
+          // Remove this when webpack adds a warning or an error for this.
+          // See https://github.com/webpack/webpack/issues/6571
+          sideEffects: true
         },
+        // Adds support for CSS Modules (https://github.com/css-modules/css-modules)
+        // using the extension .module.css
         {
-          test: /\.less$/,
-          enforce: 'pre',
-          include: [appSrc, /node_modules/],
-          use: [
-            {
-              loader: 'less-loader',
-              options: {
-                sourceMap: false,
-                globalVars: { theme: 'vira' },
-                paths: ['node_modules']
-              }
+          test: cssModuleRegex,
+          use: getStyleLoaders({
+            importLoaders: 1,
+            modules: {
+              mode: 'local',
+              getLocalIdent: getCSSModuleLocalIdent
             }
-          ]
+          })
+        },
+        // Opt-in support for SASS (using .scss or .sass extensions).
+        // By default we support SASS Modules with the
+        // extensions .module.scss or .module.sass
+        {
+          test: sassRegex,
+          exclude: sassModuleRegex,
+          use: getStyleLoaders(
+            {
+              importLoaders: 3,
+              modules: {
+                mode: 'icss'
+              }
+            },
+            'sass-loader'
+          ),
+          // Don't consider CSS imports dead code even if the
+          // containing package claims to have no side effects.
+          // Remove this when webpack adds a warning or an error for this.
+          // See https://github.com/webpack/webpack/issues/6571
+          sideEffects: true
+        },
+        // Adds support for CSS Modules, but using SASS
+        // using the extension .module.scss or .module.sass
+        {
+          test: sassModuleRegex,
+          use: getStyleLoaders(
+            {
+              importLoaders: 3,
+              modules: {
+                mode: 'local',
+                getLocalIdent: getCSSModuleLocalIdent
+              }
+            },
+            'sass-loader'
+          )
         },
         {
-          test: /\.(css|s[ac]ss|less)$/,
-          include: [appSrc],
-          oneOf: getStyleLoaders()
-        },
-        {
-          test: /\.(css|s[ac]ss|less)$/,
-          exclude: [appSrc],
-          use: getStyleLoaders(true)
-        },
-        {
-          test: /\.(png|jpg|svg|gif)$/,
-          type: 'asset/resource',
-          generator: {
-            // [ext]前面自带"."
-            filename: 'assets/[hash:8].[name][ext]'
-          }
+          // Exclude `js` files to keep "css" loader working as it injects
+          // its runtime that would otherwise be processed through "file" loader.
+          // Also exclude `html` and `json` extensions so they get processed
+          // by webpacks internal loaders.
+          exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+          type: 'asset/resource'
         }
       ]
     },
@@ -220,9 +264,41 @@ module.exports = ({ entry = [], plugins = [] }) => {
         inject: __DEV__ ? 'body' : 'head',
         minify
       }),
+      new ModuleNotFoundPlugin(paths.appPath),
       new webpack.DefinePlugin(stringified),
       new InterpolateHtmlPlugin(HtmlWebpackPlugin, variables),
+      useTypeScript &&
+        new ForkTsCheckerWebpackPlugin({
+          typescript: resolve.sync('typescript', {
+            basedir: paths.appNodeModules
+          }),
+          async: __DEV__,
+          checkSyntacticErrors: true,
+          resolveModuleNameModule: process.versions.pnp
+            ? `${__dirname}/pnpTs.js`
+            : undefined,
+          resolveTypeReferenceDirectiveModule: process.versions.pnp
+            ? `${__dirname}/pnpTs.js`
+            : undefined,
+          tsconfig: paths.appTsConfig,
+          reportFiles: [
+            // This one is specifically to match during CI tests,
+            // as micromatch doesn't match
+            // '../cra-template-typescript/template/src/App.tsx'
+            // otherwise.
+            '../**/src/**/*.{ts,tsx}',
+            '**/src/**/*.{ts,tsx}',
+            '!**/src/**/__tests__/**',
+            '!**/src/**/?(*.)(spec|test).*',
+            '!**/src/setupProxy.*',
+            '!**/src/setupTests.*'
+          ],
+          silent: true,
+          // The formatter is invoked directly in WebpackDevServerUtils during development
+          formatter: !__DEV__ ? typescriptFormatter : undefined
+        }),
       ...plugins
-    ].filter(Boolean)
+    ].filter(Boolean),
+    performance: false
   }
 }

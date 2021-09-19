@@ -8,6 +8,7 @@ if (!process.env.APP_ENV) {
 }
 
 process.on('unhandledRejection', (err) => {
+  console.error(err)
   throw err
 })
 
@@ -17,14 +18,18 @@ const chalk = require('chalk')
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages')
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter')
 const printBuildError = require('react-dev-utils/printBuildError')
+const { checkBrowsers } = require('react-dev-utils/browsersHelper')
+
 const configFactory = require('../webpack/webpack.config.build')
-const { appBuild, appPublic, appHtml } = require('../variables/paths')
+const { appPath, appBuild, appPublic, appHtml } = require('../variables/paths')
 
 const { measureFileSizesBeforeBuild, printFileSizesAfterBuild } =
   FileSizeReporter
 
 const WARN_AFTER_BUNDLE_GZIP_SIZE = 512 * 1024
 const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024
+
+const isInteractive = process.stdout.isTTY
 
 function build(previousFileSizes) {
   console.log(`${chalk.green('Environment:')} ${process.env.APP_ENV}`)
@@ -43,11 +48,22 @@ function build(previousFileSizes) {
         if (!err.message) {
           return reject(err)
         }
+
+        let errMessage = err.message
+
+        // Add additional information for postcss errors
+        if (Object.prototype.hasOwnProperty.call(err, 'postcssNode')) {
+          errMessage += `\nCompileError: Begins at CSS selector ${err?.postcssNode?.selector}`
+        }
+
         messages = formatWebpackMessages({
-          errors: [err.message],
+          errors: [errMessage],
           warnings: []
         })
       } else {
+        console.error(
+          stats.toJson({ all: false, warnings: true, errors: true })
+        )
         messages = formatWebpackMessages(
           stats.toJson({ all: false, warnings: true, errors: true })
         )
@@ -94,7 +110,8 @@ function copyPublicFolder() {
 }
 
 module.exports = () => {
-  measureFileSizesBeforeBuild(appBuild)
+  checkBrowsers(appPath, isInteractive)
+    .then(() => measureFileSizesBeforeBuild(appBuild))
     .then((previousFileSizes) => {
       // Remove all content but keep the directory so that
       // if you're in it, you don't end up in Trash
@@ -134,14 +151,24 @@ module.exports = () => {
         console.log()
       },
       (err) => {
-        console.log(chalk.red('Failed to compile.\n'))
-        printBuildError(err)
-        process.exit(1)
+        const tscCompileOnError = process.env.TSC_COMPILE_ON_ERROR === 'true'
+        if (tscCompileOnError) {
+          console.log(
+            chalk.yellow(
+              'Compiled with the following type errors (you may want to check these before deploying your app):\n'
+            )
+          )
+          printBuildError(err)
+        } else {
+          console.log(chalk.red('Failed to compile.\n'))
+          printBuildError(err)
+          process.exit(1)
+        }
       }
     )
     .catch((err) => {
       if (err && err.message) {
-        console.log(err.message)
+        console.error(err.message)
       }
       process.exit(1)
     })
