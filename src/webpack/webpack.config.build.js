@@ -1,17 +1,17 @@
 const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const safePostCssParser = require('postcss-safe-parser')
 const { SourceMapDevToolPlugin } = require('webpack')
 const { merge } = require('webpack-merge')
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 const StyleExtHtmlWebpackPlugin = require('../webpack-plugins/style-ext-html-webpack-plugin')
 const { appSrc, appBuild } = require('../variables/paths')
 const { PUBLIC_PATH } = require('../variables/variables')
 const configFactory = require('./webpack.config')
 const { processWebpackConfig } = require('../utils/custom-config')
+
+const isEnvProductionProfile = process.argv.includes('--profile')
 
 module.exports = () =>
   processWebpackConfig(
@@ -25,29 +25,8 @@ module.exports = () =>
           new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
-            filename: 'css/[name].[contenthash:8].css',
-            chunkFilename: 'css/[name].[contenthash:8].chunk.css'
-          }),
-          new ScriptExtHtmlWebpackPlugin({
-            inline: [
-              // https://github.com/webpack-contrib/mini-css-extract-plugin/issues/85
-              // temporary fix style.js issue
-              /styles.*\.js$/
-            ],
-            defaultAttribute: 'defer',
-            custom: [
-              {
-                test: /\.js$/,
-                attribute: 'onerror',
-                value:
-                  'window.__ERR_SCRIPTS__ = (window.__ERR_SCRIPTS__ || []).concat(this.src)'
-              },
-              {
-                test: /\.js$/,
-                attribute: 'crossorigin',
-                value: 'anonymous'
-              }
-            ]
+            filename: 'css/[name].css',
+            chunkFilename: 'css/[id].css'
           }),
           new StyleExtHtmlWebpackPlugin(HtmlWebpackPlugin, {
             custom: [
@@ -83,7 +62,7 @@ module.exports = () =>
             new TerserPlugin({
               terserOptions: {
                 parse: {
-                  // we want terser to parse ecma 8 code. However, we don't want it
+                  // We want terser to parse ecma 8 code. However, we don't want it
                   // to apply any minification steps that turns valid ecma 5 code
                   // into invalid ecma 5 code. This is why the 'compress' and 'output'
                   // sections only apply transformations that are ecma 5 safe
@@ -107,6 +86,9 @@ module.exports = () =>
                 mangle: {
                   safari10: true
                 },
+                // Added for profiling in devtools
+                keep_classnames: isEnvProductionProfile,
+                keep_fnames: isEnvProductionProfile,
                 output: {
                   ecma: 5,
                   comments: false,
@@ -114,26 +96,11 @@ module.exports = () =>
                   // https://github.com/facebook/create-react-app/issues/2488
                   ascii_only: true
                 }
-              },
-              // Use multi-process parallel running to improve the build speed
-              // Default number of concurrent runs: os.cpus().length - 1
-              // Disabled on WSL (Windows Subsystem for Linux) due to an issue with Terser
-              // https://github.com/webpack-contrib/terser-webpack-plugin/issues/21
-              parallel: true,
-              // Enable file caching
-              cache: true,
-              sourceMap: true
+              }
             }),
             // This is only used in production mode
-            new OptimizeCSSAssetsPlugin({
-              cssProcessorOptions: {
-                parser: safePostCssParser,
-                map: false
-              }
-            })
+            new CssMinimizerPlugin()
           ],
-          moduleIds: 'hashed',
-          chunkIds: 'named',
           splitChunks: {
             // 避免生成名字过长的 chunk
             name: false,
@@ -161,7 +128,12 @@ module.exports = () =>
               }
             }
           },
-          runtimeChunk: { name: 'runtime' }
+          // Keep the runtime chunk separated to enable long term caching
+          // https://twitter.com/wSokra/status/969679223278505985
+          // https://github.com/facebook/create-react-app/issues/5358
+          runtimeChunk: {
+            name: (entrypoint) => `runtime-${entrypoint.name}`
+          }
         }
       }
     )

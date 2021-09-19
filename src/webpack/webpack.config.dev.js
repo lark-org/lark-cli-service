@@ -2,12 +2,16 @@ const path = require('path')
 const webpack = require('webpack')
 const { merge } = require('webpack-merge')
 const ignoredFiles = require('react-dev-utils/ignoredFiles')
+const redirectServedPath = require('react-dev-utils/redirectServedPathMiddleware')
+const noopServiceWorkerMiddleware = require('react-dev-utils/noopServiceWorkerMiddleware')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const evalSourceMapMiddleware = require('react-dev-utils/evalSourceMapMiddleware')
+const errorOverlayMiddleware = require('react-dev-utils/errorOverlayMiddleware')
 const { appPublic, appSrc } = require('../variables/paths')
 const { PUBLIC_PATH } = require('../variables/variables')
 const configFactory = require('./webpack.config')
 const { processWebpackConfig } = require('../utils/custom-config')
+const paths = require('../variables/paths')
 
 module.exports = () =>
   processWebpackConfig(
@@ -22,13 +26,16 @@ module.exports = () =>
         mode: 'development',
         devtool: 'cheap-module-source-map',
         output: {
+          path: paths.appBuild,
+          // Add /* filename */ comments to generated require()s in the output.
           pathinfo: true,
-          filename: '[name].js',
-          chunkFilename: '[id].chunk.js',
-          // see https://github.com/webpack/webpack/issues/6642#issuecomment-370222543
-          globalObject: 'this',
+          filename: 'static/js/bundle.js',
+          chunkFilename: 'static/js/[name].chunk.js',
+          assetModuleFilename: 'static/media/[name].[hash][ext]',
           devtoolModuleFilenameTemplate: (info) =>
-            path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')
+            path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
+          // see https://github.com/webpack/webpack/issues/6642#issuecomment-370222543
+          globalObject: 'this'
         },
         devServer: {
           client: {
@@ -79,6 +86,19 @@ module.exports = () =>
           },
           onBeforeSetupMiddleware(devServer) {
             devServer.app.use(evalSourceMapMiddleware(devServer))
+            // This lets us open files from the runtime error overlay.
+            devServer.app.use(errorOverlayMiddleware())
+          },
+          onAfterSetupMiddleware(devServer) {
+            // Redirect to `PUBLIC_URL` or `homepage` from `package.json` if url not match
+            devServer.app.use(redirectServedPath(PUBLIC_PATH))
+
+            // This service worker file is effectively a 'no-op' that will reset any
+            // previous service worker registered for the same host:port combination.
+            // We do this in development to avoid hitting the production cache if
+            // it used the same host and port.
+            // https://github.com/facebook/create-react-app/issues/2272#issuecomment-302832432
+            devServer.app.use(noopServiceWorkerMiddleware(PUBLIC_PATH))
           }
         }
       }
