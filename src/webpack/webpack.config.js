@@ -7,6 +7,7 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 const fs = require('fs-extra')
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent')
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter')
+
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin')
 const postcssNormalize = require('postcss-normalize')
 
@@ -30,69 +31,71 @@ const imageInlineSizeLimit = parseInt(
   process.env.IMAGE_INLINE_SIZE_LIMIT || '10000',
   10
 )
-const cssRegex = /\.css$/
-const cssModuleRegex = /\.module\.css$/
-const sassRegex = /\.(scss|sass)$/
-const sassModuleRegex = /\.module\.(scss|sass)$/
-
 const useTypeScript = fs.existsSync(paths.appTsConfig)
 
-function getStyleLoaders(cssOptions, preProcessor) {
-  const loaders = [
-    // eslint-disable-next-line no-nested-ternary
-    __DEV__ ? require.resolve('style-loader') : MiniCssExtractPlugin.loader,
-    {
-      loader: require.resolve('css-loader'),
-      options: {
-        // turn on sourceMap will cause FOUC
-        // see https://github.com/webpack-contrib/css-loader/issues/613
-        sourceMap: false,
-        importLoaders: 1,
-        ...cssOptions
-      }
-    },
-    {
-      loader: require.resolve('postcss-loader'),
-      options: {
-        // Necessary for external CSS imports to work
-        // https://github.com/facebook/create-react-app/issues/2677
-        postcssOptions: {
-          plugins: () => [
-            require('postcss-flexbugs-fixes'),
-            require('postcss-preset-env')({
-              autoprefixer: {
-                flexbox: 'no-2009'
-              },
-              stage: 3
-            }),
-            // Adds PostCSS Normalize as the reset css with default options,
-            // so that it honors browserslist config in package.json
-            // which in turn let's users customize the target behavior as per their needs.
-            postcssNormalize()
-          ],
-          sourceMap: false
-        }
+function getStyleLoaders(external) {
+  function getLoaders(modules) {
+    let modulesQuery
+
+    if (modules) {
+      modulesQuery = {
+        modules: true,
+        localIdentName: getCSSModuleLocalIdent
       }
     }
-  ].filter(Boolean)
 
-  if (preProcessor) {
-    loaders.push(
+    return [
+      // eslint-disable-next-line no-nested-ternary
+      __DEV__ ? require.resolve('style-loader') : MiniCssExtractPlugin.loader,
       {
-        loader: require.resolve('resolve-url-loader'),
+        loader: require.resolve('css-loader'),
         options: {
-          root: paths.appSrc
+          // turn on sourceMap will cause FOUC
+          // see https://github.com/webpack-contrib/css-loader/issues/613
+          sourceMap: false,
+          importLoaders: 1,
+          ...modulesQuery
         }
       },
       {
-        loader: require.resolve(preProcessor),
+        loader: require.resolve('postcss-loader'),
         options: {
-          sourceMap: true
+          // Necessary for external CSS imports to work
+          // https://github.com/facebook/create-react-app/issues/2677
+          postcssOptions: {
+            plugins: [
+              require('postcss-flexbugs-fixes'),
+              require('postcss-preset-env')({
+                autoprefixer: {
+                  flexbox: 'no-2009'
+                },
+                stage: 3
+              }),
+              // Adds PostCSS Normalize as the reset css with default options,
+              // so that it honors browserslist config in package.json
+              // which in turn let's users customize the target behavior as per their needs.
+              postcssNormalize()
+            ],
+            sourceMap: false
+          }
         }
       }
-    )
+    ]
   }
-  return loaders
+
+  if (!external) {
+    return [
+      {
+        resourceQuery: /modules/,
+        use: getLoaders(true)
+      },
+      {
+        use: getLoaders()
+      }
+    ]
+  }
+
+  return getLoaders()
 }
 
 module.exports = ({ entry = [], plugins = [] }) => {
@@ -123,7 +126,7 @@ module.exports = ({ entry = [], plugins = [] }) => {
         '@': appSrc,
         src: appSrc
       },
-      extensions: ['.ts', '.tsx', '.jsx', '.js', '.scss', '*.less']
+      extensions: ['.ts', '.tsx', '.jsx', '.js', '.scss', '.sass', '.less']
     },
     module: {
       strictExportPresence: true,
@@ -136,6 +139,21 @@ module.exports = ({ entry = [], plugins = [] }) => {
               maxSize: imageInlineSizeLimit
             }
           }
+        },
+        {
+          test: /\.s[ac]ss$/,
+          enforce: 'pre',
+          include: [appSrc],
+          use: [
+            {
+              loader: require.resolve('sass-loader'),
+              options: {
+                // turn on sourceMap will cause FOUC
+                // see https://github.com/webpack-contrib/css-loader/issues/613
+                sourceMap: false
+              }
+            }
+          ]
         },
         {
           test: /\.(js|jsx|ts|tsx)$/,
@@ -170,67 +188,14 @@ module.exports = ({ entry = [], plugins = [] }) => {
         },
 
         {
-          test: cssRegex,
-          exclude: cssModuleRegex,
-          use: getStyleLoaders({
-            importLoaders: 1,
-            modules: {
-              mode: 'icss'
-            }
-          }),
-          // Don't consider CSS imports dead code even if the
-          // containing package claims to have no side effects.
-          // Remove this when webpack adds a warning or an error for this.
-          // See https://github.com/webpack/webpack/issues/6571
-          sideEffects: true
+          test: /\.(css|s[ac]ss)$/,
+          include: [appSrc],
+          oneOf: getStyleLoaders()
         },
-        // Adds support for CSS Modules (https://github.com/css-modules/css-modules)
-        // using the extension .module.css
         {
-          test: cssModuleRegex,
-          use: getStyleLoaders({
-            importLoaders: 1,
-            modules: {
-              mode: 'local',
-              getLocalIdent: getCSSModuleLocalIdent
-            }
-          })
-        },
-        // Opt-in support for SASS (using .scss or .sass extensions).
-        // By default we support SASS Modules with the
-        // extensions .module.scss or .module.sass
-        {
-          test: sassRegex,
-          exclude: sassModuleRegex,
-          use: getStyleLoaders(
-            {
-              importLoaders: 3,
-              modules: {
-                mode: 'icss'
-              }
-            },
-            'sass-loader'
-          ),
-          // Don't consider CSS imports dead code even if the
-          // containing package claims to have no side effects.
-          // Remove this when webpack adds a warning or an error for this.
-          // See https://github.com/webpack/webpack/issues/6571
-          sideEffects: true
-        },
-        // Adds support for CSS Modules, but using SASS
-        // using the extension .module.scss or .module.sass
-        {
-          test: sassModuleRegex,
-          use: getStyleLoaders(
-            {
-              importLoaders: 3,
-              modules: {
-                mode: 'local',
-                getLocalIdent: getCSSModuleLocalIdent
-              }
-            },
-            'sass-loader'
-          )
+          test: /\.(css|s[ac]ss)$/,
+          exclude: [appSrc],
+          use: getStyleLoaders(true)
         },
         {
           // Exclude `js` files to keep "css" loader working as it injects
