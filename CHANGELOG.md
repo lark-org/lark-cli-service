@@ -1,3 +1,16 @@
+# [2.0.0-beta.0](https://github.com/lark-org/lark-cli-service/compare/v1.0.5...v2.0.0-beta.0) (2021-09-20)
+
+### Bug Fixes
+
+- 解决 build 时一些问题 ([5374005](https://github.com/lark-org/lark-cli-service/commit/53740052322df5f292c97fb6f0fb379c8bf60e20))
+- 升级 webpack5 配置 ([f9a1f2f](https://github.com/lark-org/lark-cli-service/commit/f9a1f2f618a20417902b548e63eca999d1f5327f))
+
+### Features
+
+- 更新 config ([4060ab6](https://github.com/lark-org/lark-cli-service/commit/4060ab68302c23298daf49d67e13593beaf56f13))
+- add release it ([709aae0](https://github.com/lark-org/lark-cli-service/commit/709aae0e1a322a1a54378781d9a9ff85d7839fc1))
+- dev server 升级至 webpack5 ([518b51b](https://github.com/lark-org/lark-cli-service/commit/518b51b1a145905d3c2405aaafb4c75d85c8373e))
+
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
