@@ -10,7 +10,7 @@
     "lint": "yarn lint:code && yarn lint:format",
     "lint:code": "eslint src --fix",
     "lint:format": "prettier --write .",
-    "release": "standard-version",
+    "release": "release-it",
     "preversion": "yarn lint",
     "prepare": "husky install"
   },
@@ -85,6 +85,7 @@
     "yargs": "^17.1.1"
   },
   "devDependencies": {
+    "@release-it/conventional-changelog": "^3.3.0",
     "@tsconfig/node12": "^1.0.9",
     "@types/yargs": "^17.0.2",
     "eslint": "^7.32.0",
@@ -92,7 +93,7 @@
     "husky": "^7.0.2",
     "lint-staged": "^11.1.2",
     "prettier": "^2.4.1",
-    "standard-version": "7.1.0",
+    "release-it": "^14.11.5",
     "typescript": "^4.4.3"
   }
 }
