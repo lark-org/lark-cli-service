@@ -31,7 +31,6 @@ module.exports = () =>
           pathinfo: true,
           filename: 'static/js/bundle.js',
           chunkFilename: 'static/js/[name].chunk.js',
-          assetModuleFilename: 'static/media/[name].[hash][ext]',
           devtoolModuleFilenameTemplate: (info) =>
             path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
           // see https://github.com/webpack/webpack/issues/6642#issuecomment-370222543

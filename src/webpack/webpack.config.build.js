@@ -5,6 +5,8 @@ const TerserPlugin = require('terser-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { SourceMapDevToolPlugin } = require('webpack')
 const { merge } = require('webpack-merge')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const safePostCssParser = require('postcss-safe-parser')
 const StyleExtHtmlWebpackPlugin = require('../webpack-plugins/style-ext-html-webpack-plugin')
 const { appSrc, appBuild } = require('../variables/paths')
 const { PUBLIC_PATH } = require('../variables/variables')
@@ -25,17 +27,30 @@ module.exports = () =>
           new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
-            filename: 'css/[name].css',
-            chunkFilename: 'css/[id].css'
+            filename: 'css/[name].[contenthash:8].css',
+            chunkFilename: 'css/[name].[contenthash:8].chunk.css',
+            attributes: {
+              onerror: '__STYLE_LOAD_ERROR__(event)'
+            }
           }),
-          new StyleExtHtmlWebpackPlugin(HtmlWebpackPlugin, {
-            custom: [
-              {
-                test: /\.css$/,
-                attribute: 'onerror',
-                value: '__STYLE_LOAD_ERROR__(event)'
-              }
-            ]
+          // new StyleExtHtmlWebpackPlugin(HtmlWebpackPlugin, {
+          //   custom: [
+          //     {
+          //       test: /\.css$/,
+          //       attribute: 'onerror',
+          //       value: '__STYLE_LOAD_ERROR__(event)'
+          //     }
+          //   ]
+          // }),
+          // This is only used in production mode
+          new OptimizeCSSAssetsPlugin({
+            cssProcessorOptions: {
+              parser: safePostCssParser,
+              map: false
+            },
+            cssProcessorPluginOptions: {
+              preset: ['default', { minifyFontValues: { removeQuotes: false } }]
+            }
           })
         ]
       }),
@@ -53,6 +68,7 @@ module.exports = () =>
           path: appBuild,
           filename: 'js/[name].[chunkhash:8].js',
           chunkFilename: 'js/[name].[chunkhash:8].chunk.js',
+          assetModuleFilename: 'static/media/[name].[hash][ext]',
           devtoolModuleFilenameTemplate: (info) =>
             path.relative(appSrc, info.absoluteResourcePath).replace(/\\/g, '/')
         },

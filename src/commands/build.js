@@ -15,13 +15,13 @@ process.on('unhandledRejection', (err) => {
 const webpack = require('webpack')
 const fs = require('fs-extra')
 const chalk = require('chalk')
-const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages')
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter')
 const printBuildError = require('react-dev-utils/printBuildError')
 const { checkBrowsers } = require('react-dev-utils/browsersHelper')
 
 const configFactory = require('../webpack/webpack.config.build')
 const { appPath, appBuild, appPublic, appHtml } = require('../variables/paths')
+const formatWebpackMessages = require('../dev-utils/formatWebpackMessages')
 
 const { measureFileSizesBeforeBuild, printFileSizesAfterBuild } =
   FileSizeReporter
