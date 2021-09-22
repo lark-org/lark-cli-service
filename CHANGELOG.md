@@ -1,3 +1,9 @@
+# [2.0.0-beta.1](https://github.com/lark-org/lark-cli-service/compare/v2.0.0-beta.0...v2.0.0-beta.1) (2021-09-22)
+
+### Bug Fixes
+
+- 样式构建错误问题 ([31e5eeb](https://github.com/lark-org/lark-cli-service/commit/31e5eeb75ed5229ed03e457c62eb80e02a0f79b5))
+
 # [2.0.0-beta.0](https://github.com/lark-org/lark-cli-service/compare/v1.0.5...v2.0.0-beta.0) (2021-09-20)
 
 ### Bug Fixes
