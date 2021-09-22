@@ -146,11 +146,18 @@ module.exports = ({ entry = [], plugins = [] }) => {
           include: [appSrc],
           use: [
             {
+              loader: require.resolve('resolve-url-loader'),
+              options: {
+                sourceMap: false,
+                root: appSrc
+              }
+            },
+            {
               loader: require.resolve('sass-loader'),
               options: {
                 // turn on sourceMap will cause FOUC
                 // see https://github.com/webpack-contrib/css-loader/issues/613
-                sourceMap: false
+                sourceMap: true
               }
             }
           ]
@@ -196,14 +203,6 @@ module.exports = ({ entry = [], plugins = [] }) => {
           test: /\.(css|s[ac]ss)$/,
           exclude: [appSrc],
           use: getStyleLoaders(true)
-        },
-        {
-          // Exclude `js` files to keep "css" loader working as it injects
-          // its runtime that would otherwise be processed through "file" loader.
-          // Also exclude `html` and `json` extensions so they get processed
-          // by webpacks internal loaders.
-          exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
-          type: 'asset/resource'
         }
       ]
     },
