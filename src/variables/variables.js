@@ -1,5 +1,6 @@
 const { getCustomConfig } = require('../utils/custom-config')
 const { getProjectFilePath } = require('../utils/path')
+const pkg = require('../../package.json')
 
 if (!process.env.APP_ENV) {
   process.env.APP_ENV = 'production'
@@ -26,7 +27,7 @@ try {
 
 const customVariables = getCustomConfig().variables
 const RELEASE = GIT_COMMIT_SHA.substr(0, 7)
-
+const buildTime = new Date()
 const variables = {
   __DEV__,
   GIT_COMMIT_SHA,
@@ -36,6 +37,8 @@ const variables = {
   APP_ENV,
   APP_NAME,
   PUBLIC_PATH,
+  CLI_VERSION: pkg.version,
+  BUILD_TIME: `${buildTime.toLocaleDateString()} ${buildTime.toLocaleTimeString()}`,
   ...customVariables
 }
 
