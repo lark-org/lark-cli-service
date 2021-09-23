@@ -1,3 +1,9 @@
+# [2.0.0-beta.2](https://github.com/lark-org/lark-cli-service/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2021-09-23)
+
+### Bug Fixes
+
+- 增加 pro 构建后版本日志 ([6821560](https://github.com/lark-org/lark-cli-service/commit/682156085ec572883afb06395256ec491753337b))
+
 # [2.0.0-beta.1](https://github.com/lark-org/lark-cli-service/compare/v2.0.0-beta.0...v2.0.0-beta.1) (2021-09-22)
 
 ### Bug Fixes
