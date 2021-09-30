@@ -1,3 +1,9 @@
+# [2.0.0-beta.3](https://github.com/lark-org/lark-cli-service/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2021-09-30)
+
+### Features
+
+- add pretty log ([fddadf5](https://github.com/lark-org/lark-cli-service/commit/fddadf50414028ef0f3908bcaf2933e3c7048d91))
+
 # [2.0.0-beta.2](https://github.com/lark-org/lark-cli-service/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2021-09-23)
 
 ### Bug Fixes
