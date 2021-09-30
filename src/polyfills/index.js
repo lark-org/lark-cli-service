@@ -1,2 +1,2 @@
 require('./rAF')
-require('./logVersion')
+require('./appLog')

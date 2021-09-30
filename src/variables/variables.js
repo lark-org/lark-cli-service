@@ -39,6 +39,7 @@ const variables = {
   PUBLIC_PATH,
   CLI_VERSION: pkg.version,
   BUILD_TIME: `${buildTime.toLocaleDateString()} ${buildTime.toLocaleTimeString()}`,
+  APP_LOG: true,
   ...customVariables
 }
 
