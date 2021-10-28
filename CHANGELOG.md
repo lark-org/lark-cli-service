@@ -1,3 +1,10 @@
+# [2.0.0](https://github.com/lark-org/lark-cli-service/compare/v2.0.0-beta.3...v2.0.0) (2021-10-28)
+
+### Bug Fixes
+
+- 解决 scss 预编译限制 ([badb487](https://github.com/lark-org/lark-cli-service/commit/badb487b3eee13b168c69f170a076db49366a2c3))
+- 解决自定义配置问题 ([904cd67](https://github.com/lark-org/lark-cli-service/commit/904cd679a33689804bf3f9483635d99f405d0b2d))
+
 # [2.0.0-beta.3](https://github.com/lark-org/lark-cli-service/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2021-09-30)
 
 ### Features
