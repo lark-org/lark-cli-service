@@ -6,7 +6,9 @@ const path = require('path')
 // TODO: 作为一个 preset 的方式大概会更好
 
 module.exports = (api) => {
-  const projectBabelPath = getProjectFilePath('.babel.config.js')
+  const projectBabelPath =
+    getProjectFilePath('.babel.config.js') ||
+    getProjectFilePath('babel.config.js')
 
   let customBabelConfig = {}
   if (fs.existsSync(projectBabelPath)) {
@@ -18,10 +20,7 @@ module.exports = (api) => {
   const { NODE_ENV, BABEL_ENV } = process.env
   const resolverOpts = {
     root: [path.relative(__dirname, process.cwd())],
-    extensions: ['.js', '.jsx', '.tsx', '.ts'],
-    alias: {
-      '@': './src'
-    }
+    extensions: ['.js', '.jsx', '.tsx', '.ts']
   }
 
   let environment = []
@@ -39,8 +38,8 @@ module.exports = (api) => {
   const config = {
     presets: [
       ['@babel/preset-env'],
-      '@babel/preset-react',
-      '@babel/preset-typescript'
+      '@babel/preset-typescript',
+      '@babel/preset-react'
     ],
     plugins: [
       ...environment,

@@ -29,18 +29,19 @@ const getCustomConfig = () => {
   return customConfig
 }
 
+let webpackConfig = null
 const processWebpackConfig = (config) => {
   const customWebpackConfig = getCustomConfig().configureWebpack
 
   if (typeof customWebpackConfig === 'function') {
-    customConfig = customWebpackConfig(config)
+    webpackConfig = customWebpackConfig(config)
   } else if (typeof customWebpackConfig === 'object') {
-    customConfig = customWebpackConfig
+    webpackConfig = customWebpackConfig
   }
 
-  if (customConfig) {
+  if (webpackConfig) {
     // eslint-disable-next-line no-param-reassign
-    config = mergeWebpackConfig(config, customConfig)
+    config = mergeWebpackConfig(config, webpackConfig)
   }
   return config
 }

@@ -35,6 +35,4 @@ yargs
   })
   .demandCommand()
   .help()
-  .option('version', {
-    alias: 'v'
-  }).argv
+  .version().argv
