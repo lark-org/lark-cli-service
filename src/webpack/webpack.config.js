@@ -143,7 +143,6 @@ module.exports = ({ entry = [], plugins = [] }) => {
         {
           test: /\.s[ac]ss$/,
           enforce: 'pre',
-          include: [appSrc],
           use: [
             {
               loader: require.resolve('resolve-url-loader'),
