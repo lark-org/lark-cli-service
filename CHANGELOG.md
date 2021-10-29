@@ -1,3 +1,9 @@
+## [2.0.1](https://github.com/lark-org/lark-cli-service/compare/v2.0.0...v2.0.1) (2021-10-29)
+
+### Bug Fixes
+
+- 修改 html inject 位置 ([256abce](https://github.com/lark-org/lark-cli-service/commit/256abce7c56ed263953b290aa66b1cf77c27f8fc))
+
 # [2.0.0](https://github.com/lark-org/lark-cli-service/compare/v2.0.0-beta.3...v2.0.0) (2021-10-28)
 
 ### Bug Fixes
