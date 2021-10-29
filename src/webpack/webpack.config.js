@@ -224,7 +224,7 @@ module.exports = ({ entry = [], plugins = [] }) => {
     plugins: [
       new HtmlWebpackPlugin({
         template: appHtml,
-        inject: __DEV__ ? 'body' : 'head',
+        inject: !__DEV__ ? 'body' : 'head',
         minify
       }),
       new ModuleNotFoundPlugin(paths.appPath),
