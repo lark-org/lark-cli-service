@@ -43,7 +43,7 @@
     "@babel/plugin-transform-runtime": "^7.15.8",
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-react": "^7.16.0",
-    "@babel/preset-typescript": "^7.15.0",
+    "@babel/preset-typescript": "^7.16.0",
     "@babel/runtime-corejs2": "^7.15.4",
     "babel-eslint": "10.1.0",
     "babel-jest": "^27.3.1",
