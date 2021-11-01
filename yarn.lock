@@ -891,9 +891,9 @@
     "@babel/helper-validator-option" "^7.14.5"
     "@babel/plugin-transform-typescript" "^7.15.0"
 
-"@babel/runtime-corejs2@^7.15.4":
-  version "7.15.4"
-  resolved "https://registry.npmjs.org/@babel/runtime-corejs2/-/runtime-corejs2-7.15.4.tgz"
+"@babel/runtime-corejs2@^7.16.0":
+  version "7.16.0"
+  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs2/-/runtime-corejs2-7.16.0.tgz#1352db0e48b6e7715dfdd41f541c903e2cff3b28"
   dependencies:
     core-js "^2.6.5"
     regenerator-runtime "^0.13.4"
