@@ -32,7 +32,7 @@
     "url": "git@github.com:lark-org/lark-cli-service.git"
   },
   "dependencies": {
-    "@babel/cli": "^7.15.7",
+    "@babel/cli": "^7.16.0",
     "@babel/core": "^7.15.8",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
     "@babel/plugin-proposal-decorators": "^7.15.8",
