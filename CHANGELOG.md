@@ -1,3 +1,5 @@
+## [2.0.2](https://github.com/lark-org/lark-cli-service/compare/v2.0.1...v2.0.2) (2021-11-02)
+
 ## [2.0.1](https://github.com/lark-org/lark-cli-service/compare/v2.0.0...v2.0.1) (2021-10-29)
 
 ### Bug Fixes
