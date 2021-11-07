@@ -141,6 +141,27 @@ module.exports = ({ entry = [], plugins = [] }) => {
           }
         },
         {
+          test: /\.less$/,
+          enforce: 'pre',
+          use: [
+            {
+              loader: require.resolve('resolve-url-loader'),
+              options: {
+                sourceMap: false,
+                root: appSrc
+              }
+            },
+            {
+              loader: require.resolve('less-loader'),
+              options: {
+                // turn on sourceMap will cause FOUC
+                // see https://github.com/webpack-contrib/css-loader/issues/613
+                sourceMap: true
+              }
+            }
+          ]
+        },
+        {
           test: /\.s[ac]ss$/,
           enforce: 'pre',
           use: [
@@ -194,12 +215,12 @@ module.exports = ({ entry = [], plugins = [] }) => {
         },
 
         {
-          test: /\.(css|s[ac]ss)$/,
+          test: /\.(css|s[ac]ss|less)$/,
           include: [appSrc],
           oneOf: getStyleLoaders()
         },
         {
-          test: /\.(css|s[ac]ss)$/,
+          test: /\.(css|s[ac]ss|less)$/,
           exclude: [appSrc],
           use: getStyleLoaders(true)
         }
