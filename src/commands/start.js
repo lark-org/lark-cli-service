@@ -58,9 +58,12 @@ module.exports = async (defaultPort) => {
     const useYarn = fs.existsSync(yarnLockFile)
     const tscCompileOnError = process.env.TSC_COMPILE_ON_ERROR === 'true'
     const devSocket = {
-      warnings: (warnings) =>
-        devServer.sockWrite(devServer.sockets, 'warnings', warnings),
+      warnings: (warnings) => {
+        console.warn(warnings)
+        devServer.sockWrite(devServer.sockets, 'warnings', warnings)
+      },
       errors: (errors) => {
+        console.error(errors)
         devServer.sockWrite(devServer.sockets, 'errors', errors)
       }
     }
