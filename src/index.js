@@ -15,7 +15,7 @@ yargs
       },
       env: {
         description: 'project environment',
-        default: 'develop',
+        default: 'development',
         alias: 'e'
       }
     },
