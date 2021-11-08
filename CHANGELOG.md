@@ -1,3 +1,14 @@
+# [2.1.0](https://github.com/lark-org/lark-cli-service/compare/v2.0.2...v2.1.0) (2021-11-08)
+
+### Bug Fixes
+
+- APP_ENV value ([a76aac9](https://github.com/lark-org/lark-cli-service/commit/a76aac922ef07d4cd0d5a0610f27d4e90bf1ebef))
+- devServer.sockWrite log update ([04e4921](https://github.com/lark-org/lark-cli-service/commit/04e49219e496a859a9ec2c2e04c3da8b1e83e768))
+
+### Features
+
+- 增加 less 文件支持 ([62ee4c2](https://github.com/lark-org/lark-cli-service/commit/62ee4c21f33075004bf18fa27b7beeab29cf6d21))
+
 ## [2.0.2](https://github.com/lark-org/lark-cli-service/compare/v2.0.1...v2.0.2) (2021-11-02)
 
 ## [2.0.1](https://github.com/lark-org/lark-cli-service/compare/v2.0.0...v2.0.1) (2021-10-29)
