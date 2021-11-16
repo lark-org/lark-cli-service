@@ -1,3 +1,13 @@
+# [2.2.0](https://github.com/lark-org/lark-cli-service/compare/v2.1.0...v2.2.0) (2021-11-16)
+
+### Bug Fixes
+
+- 🐛 devs ([0b27b9a](https://github.com/lark-org/lark-cli-service/commit/0b27b9a8c236fd3b642b3fd1d61191f58b3aa752))
+
+### Features
+
+- 🎸 构建时增加 extra 信息输出和 performance 记录 ([a63c289](https://github.com/lark-org/lark-cli-service/commit/a63c28961cd58fd3b28b25b195de2abc72cb8b1c))
+
 # [2.1.0](https://github.com/lark-org/lark-cli-service/compare/v2.0.2...v2.1.0) (2021-11-08)
 
 ### Bug Fixes
