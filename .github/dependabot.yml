@@ -6,7 +6,7 @@ updates:
       interval: "weekly"
       # Check for npm updates on Sundays
       day: "sunday"
-      time: '10:00'
+      time: '12:00'
       # Use ShangHai Standard Time (UTC +08:00)
       timezone: 'Asia/Shanghai'
     open-pull-requests-limit: 10
@@ -16,7 +16,7 @@ updates:
       interval: "weekly"
       # Check for npm updates on Sundays
       day: "sunday"
-      time: '10:00'
+      time: '12:00'
       # Use ShangHai Standard Time (UTC +08:00)
       timezone: 'Asia/Shanghai'
     open-pull-requests-limit: 10
