@@ -141,6 +141,15 @@ module.exports = ({ entry = [], plugins = [] }) => {
           }
         },
         {
+          test: /\.svg$/i,
+          issuer: /\.[jt]sx?$/,
+          use: [require.resolve('@svgr/webpack')]
+        },
+        {
+          test: /\.(ttf|eot|woff|woff2)$/,
+          type: 'asset/inline'
+        },
+        {
           test: /\.less$/,
           enforce: 'pre',
           use: [
@@ -213,7 +222,10 @@ module.exports = ({ entry = [], plugins = [] }) => {
             }
           ]
         },
-
+        {
+          type: 'asset',
+          resourceQuery: /url/ // *.svg?url
+        },
         {
           test: /\.(css|s[ac]ss|less)$/,
           include: [appSrc],

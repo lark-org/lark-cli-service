@@ -68,7 +68,7 @@ module.exports = () =>
           path: appBuild,
           filename: 'js/[name].[chunkhash:8].js',
           chunkFilename: 'js/[name].[chunkhash:8].chunk.js',
-          assetModuleFilename: 'static/media/[name].[hash][ext]',
+          assetModuleFilename: 'static/media/[name].[hash][ext][query]',
           devtoolModuleFilenameTemplate: (info) =>
             path.relative(appSrc, info.absoluteResourcePath).replace(/\\/g, '/')
         },
