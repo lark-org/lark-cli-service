@@ -5,7 +5,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 const fs = require('fs-extra')
-const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent')
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter')
 
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin')
@@ -39,8 +38,9 @@ function getStyleLoaders(external) {
 
     if (modules) {
       modulesQuery = {
-        modules: true,
-        localIdentName: getCSSModuleLocalIdent
+        modules: {
+          auto: true
+        }
       }
     }
 
