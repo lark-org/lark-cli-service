@@ -56,26 +56,13 @@ module.exports = async (defaultPort) => {
     const config = configFactory()
     const useTypeScript = fs.existsSync(appTsConfig)
     const useYarn = fs.existsSync(yarnLockFile)
-    const tscCompileOnError = process.env.TSC_COMPILE_ON_ERROR === 'true'
-    const devSocket = {
-      warnings: (warnings) => {
-        console.warn(warnings)
-        devServer.sockWrite(devServer.sockets, 'warnings', warnings)
-      },
-      errors: (errors) => {
-        console.error(errors)
-        devServer.sockWrite(devServer.sockets, 'errors', errors)
-      }
-    }
     const compiler = createCompiler({
       appName,
       config,
-      devSocket,
       urls,
       useYarn,
       webpack,
-      useTypeScript,
-      tscCompileOnError
+      useTypeScript
     })
     const serverConfig = {
       ...config.devServer,

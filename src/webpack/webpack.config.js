@@ -1,13 +1,16 @@
 /* eslint-disable global-require */
 const webpack = require('webpack')
 const resolve = require('resolve')
+const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 const fs = require('fs-extra')
-const typescriptFormatter = require('react-dev-utils/typescriptFormatter')
 
-const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin')
+const ForkTsCheckerWebpackPlugin =
+  process.env.TSC_COMPILE_ON_ERROR === 'true'
+    ? require('react-dev-utils/ForkTsCheckerWarningWebpackPlugin')
+    : require('react-dev-utils/ForkTsCheckerWebpackPlugin')
 const postcssNormalize = require('postcss-normalize')
 
 const InterpolateHtmlPlugin = require('../webpack-plugins/interpolate-html-plugin')
@@ -38,9 +41,7 @@ function getStyleLoaders(external) {
 
     if (modules) {
       modulesQuery = {
-        modules: {
-          auto: true
-        }
+        modules: true
       }
     }
 
@@ -119,9 +120,34 @@ module.exports = ({ entry = [], plugins = [] }) => {
   return {
     entry: [...entry, appPolyfill, appIndex],
     output: {
-      publicPath
+      path: paths.appBuild,
+      pathinfo: __DEV__,
+      // There will be one main bundle, and one file per asynchronous chunk.
+      // In development, it does not produce real files.
+      filename: !__DEV__
+        ? 'static/js/[name].[contenthash:8].js'
+        : __DEV__ && 'static/js/bundle.js',
+      // There are also additional JS chunk files if you use code splitting.
+      chunkFilename: !__DEV__
+        ? 'static/js/[name].[contenthash:8].chunk.js'
+        : __DEV__ && 'static/js/[name].chunk.js',
+      assetModuleFilename: 'static/media/[name].[hash][ext]',
+      // webpack uses `publicPath` to determine where the app is being served from.
+      // It requires a trailing slash, or the file assets will get an incorrect path.
+      // We inferred the "public path" (such as / or /my-project) from homepage.
+      publicPath,
+      // Point sourcemap entries to original disk location (format as URL on Windows)
+      devtoolModuleFilenameTemplate: !__DEV__
+        ? (info) =>
+            path
+              .relative(paths.appSrc, info.absoluteResourcePath)
+              .replace(/\\/g, '/')
+        : __DEV__ &&
+          ((info) =>
+            path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'))
     },
     resolve: {
+      modules: ['node_modules', paths.appNodeModules],
       alias: {
         '@': appSrc,
         src: appSrc
@@ -131,24 +157,6 @@ module.exports = ({ entry = [], plugins = [] }) => {
     module: {
       strictExportPresence: true,
       rules: [
-        {
-          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-          type: 'asset',
-          parser: {
-            dataUrlCondition: {
-              maxSize: imageInlineSizeLimit
-            }
-          }
-        },
-        {
-          test: /\.svg$/i,
-          issuer: /\.[jt]sx?$/,
-          use: [require.resolve('@svgr/webpack')]
-        },
-        {
-          test: /\.(ttf|eot|woff|woff2)$/,
-          type: 'asset/inline'
-        },
         {
           test: /\.less$/,
           enforce: 'pre',
@@ -165,7 +173,10 @@ module.exports = ({ entry = [], plugins = [] }) => {
               options: {
                 // turn on sourceMap will cause FOUC
                 // see https://github.com/webpack-contrib/css-loader/issues/613
-                sourceMap: true
+                sourceMap: true,
+                lessOptions: {
+                  javascriptEnabled: true
+                }
               }
             }
           ]
@@ -192,49 +203,105 @@ module.exports = ({ entry = [], plugins = [] }) => {
           ]
         },
         {
-          test: /\.(js|jsx|ts|tsx)$/,
-          include: [appSrc],
-          loader: require.resolve('babel-loader'),
-          options: {
-            cacheDirectory: false,
-            highlightCode: true,
-            configFile: require.resolve('../.babel.config.js')
-          }
-        },
-        {
-          test: /\.wjs$/,
-          include: [appSrc],
-          use: [
+          oneOf: [
             {
-              loader: require.resolve('worker-loader'),
-              options: {
-                inline: true,
-                fallback: false,
-                publicPath: '/workers/'
+              test: [/\.avif$/],
+              type: 'asset',
+              mimetype: 'image/avif',
+              parser: {
+                dataUrlCondition: {
+                  maxSize: imageInlineSizeLimit
+                }
               }
             },
             {
+              test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+              type: 'asset',
+              parser: {
+                dataUrlCondition: {
+                  maxSize: imageInlineSizeLimit
+                }
+              }
+            },
+            {
+              test: /\.svg$/i,
+              issuer: /\.[jt]sx?$/,
+              use: [
+                {
+                  loader: require.resolve('@svgr/webpack'),
+                  options: {
+                    root: appSrc,
+                    prettier: false,
+                    svgo: false,
+                    svgoConfig: {
+                      plugins: [{ removeViewBox: false }]
+                    },
+                    titleProp: true,
+                    ref: true
+                  }
+                },
+                {
+                  loader: require.resolve('file-loader'),
+                  options: {
+                    name: 'static/media/[name].[hash].[ext]'
+                  }
+                }
+              ]
+            },
+            {
+              test: /\.(ttf|eot|woff|woff2)$/,
+              type: 'asset/inline'
+            },
+            {
+              test: /\.(js|jsx|ts|tsx)$/,
+              include: [appSrc],
               loader: require.resolve('babel-loader'),
               options: {
                 cacheDirectory: false,
-                highlightCode: true
+                highlightCode: true,
+                configFile: require.resolve('../.babel.config.js')
               }
+            },
+            {
+              test: /\.wjs$/,
+              include: [appSrc],
+              use: [
+                {
+                  loader: require.resolve('worker-loader'),
+                  options: {
+                    inline: true,
+                    fallback: false,
+                    publicPath: '/workers/'
+                  }
+                },
+                {
+                  loader: require.resolve('babel-loader'),
+                  options: {
+                    cacheDirectory: false,
+                    highlightCode: true
+                  }
+                }
+              ]
+            },
+            {
+              test: /\.(css|s[ac]ss|less)$/,
+              include: [appSrc],
+              oneOf: getStyleLoaders()
+            },
+            {
+              test: /\.(css|s[ac]ss|less)$/,
+              exclude: [appSrc],
+              use: getStyleLoaders(true)
+            },
+            {
+              // Exclude `js` files to keep "css" loader working as it injects
+              // its runtime that would otherwise be processed through "file" loader.
+              // Also exclude `html` and `json` extensions so they get processed
+              // by webpacks internal loaders.
+              exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+              type: 'asset/resource'
             }
           ]
-        },
-        {
-          type: 'asset',
-          resourceQuery: /url/ // *.svg?url
-        },
-        {
-          test: /\.(css|s[ac]ss|less)$/,
-          include: [appSrc],
-          oneOf: getStyleLoaders()
-        },
-        {
-          test: /\.(css|s[ac]ss|less)$/,
-          exclude: [appSrc],
-          use: getStyleLoaders(true)
         }
       ]
     },
@@ -265,33 +332,37 @@ module.exports = ({ entry = [], plugins = [] }) => {
       new InterpolateHtmlPlugin(HtmlWebpackPlugin, variables),
       useTypeScript &&
         new ForkTsCheckerWebpackPlugin({
-          typescript: resolve.sync('typescript', {
-            basedir: paths.appNodeModules
-          }),
           async: __DEV__,
-          checkSyntacticErrors: true,
-          resolveModuleNameModule: process.versions.pnp
-            ? `${__dirname}/pnpTs.js`
-            : undefined,
-          resolveTypeReferenceDirectiveModule: process.versions.pnp
-            ? `${__dirname}/pnpTs.js`
-            : undefined,
-          tsconfig: paths.appTsConfig,
-          reportFiles: [
+          typescript: {
+            typescriptPath: resolve.sync('typescript', {
+              basedir: paths.appNodeModules
+            }),
+            context: paths.appPath,
+            diagnosticOptions: {
+              syntactic: true
+            },
+            mode: 'write-references'
+          },
+          issue: {
             // This one is specifically to match during CI tests,
             // as micromatch doesn't match
             // '../cra-template-typescript/template/src/App.tsx'
             // otherwise.
-            '../**/src/**/*.{ts,tsx}',
-            '**/src/**/*.{ts,tsx}',
-            '!**/src/**/__tests__/**',
-            '!**/src/**/?(*.)(spec|test).*',
-            '!**/src/setupProxy.*',
-            '!**/src/setupTests.*'
-          ],
-          silent: true,
-          // The formatter is invoked directly in WebpackDevServerUtils during development
-          formatter: !__DEV__ ? typescriptFormatter : undefined
+            include: [
+              { file: '../**/src/**/*.{ts,tsx}' },
+              { file: '**/src/**/*.{ts,tsx}' },
+              { file: '**/types/**/*.{ts,tsx}' }
+            ],
+            exclude: [
+              { file: '**/src/**/__tests__/**' },
+              { file: '**/src/**/?(*.){spec|test}.*' },
+              { file: '**/src/setupProxy.*' },
+              { file: '**/src/setupTests.*' }
+            ]
+          },
+          logger: {
+            infrastructure: 'silent'
+          }
         }),
       ...plugins
     ].filter(Boolean),
