@@ -1,4 +1,3 @@
-const path = require('path')
 const webpack = require('webpack')
 const { merge } = require('webpack-merge')
 const ignoredFiles = require('react-dev-utils/ignoredFiles')
@@ -6,11 +5,12 @@ const redirectServedPath = require('react-dev-utils/redirectServedPathMiddleware
 const noopServiceWorkerMiddleware = require('react-dev-utils/noopServiceWorkerMiddleware')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const evalSourceMapMiddleware = require('react-dev-utils/evalSourceMapMiddleware')
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
+
 const { appPublic, appSrc } = require('../variables/paths')
-const { PUBLIC_PATH } = require('../variables/variables')
+const { PUBLIC_PATH, FAST_REFRESH } = require('../variables/variables')
 const configFactory = require('./webpack.config')
 const { processWebpackConfig } = require('../utils/custom-config')
-const paths = require('../variables/paths')
 
 module.exports = () =>
   processWebpackConfig(
@@ -18,6 +18,10 @@ module.exports = () =>
       configFactory({
         plugins: [
           new webpack.HotModuleReplacementPlugin(),
+          FAST_REFRESH &&
+            new ReactRefreshWebpackPlugin({
+              overlay: false
+            }),
           new CaseSensitivePathsPlugin()
         ]
       }),

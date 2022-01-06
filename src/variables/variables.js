@@ -40,6 +40,7 @@ const variables = {
   CLI_VERSION: pkg.version,
   BUILD_TIME: `${buildTime.toLocaleDateString()} ${buildTime.toLocaleTimeString()}`,
   APP_LOG: true,
+  FAST_REFRESH: process.env.FAST_REFRESH !== 'false',
   ...customVariables
 }
 
