@@ -41,7 +41,10 @@ function getStyleLoaders(external) {
 
     if (modules) {
       modulesQuery = {
-        modules: true
+        modules: {
+          mode: 'local',
+          localIdentName: '[name]__[local]--[hash:base64:7]'
+        }
       }
     }
 
@@ -175,7 +178,8 @@ module.exports = ({ entry = [], plugins = [] }) => {
                 // see https://github.com/webpack-contrib/css-loader/issues/613
                 sourceMap: true,
                 lessOptions: {
-                  javascriptEnabled: true
+                  javascriptEnabled: true,
+                  implementation: require.resolve('less')
                 }
               }
             }
