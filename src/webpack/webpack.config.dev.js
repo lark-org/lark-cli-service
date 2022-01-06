@@ -6,7 +6,6 @@ const redirectServedPath = require('react-dev-utils/redirectServedPathMiddleware
 const noopServiceWorkerMiddleware = require('react-dev-utils/noopServiceWorkerMiddleware')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const evalSourceMapMiddleware = require('react-dev-utils/evalSourceMapMiddleware')
-const errorOverlayMiddleware = require('react-dev-utils/errorOverlayMiddleware')
 const { appPublic, appSrc } = require('../variables/paths')
 const { PUBLIC_PATH } = require('../variables/variables')
 const configFactory = require('./webpack.config')
@@ -25,22 +24,19 @@ module.exports = () =>
       {
         mode: 'development',
         devtool: 'cheap-module-source-map',
-        output: {
-          path: paths.appBuild,
-          // Add /* filename */ comments to generated require()s in the output.
-          pathinfo: true,
-          filename: 'static/js/bundle.js',
-          chunkFilename: 'static/js/[name].chunk.js',
-          devtoolModuleFilenameTemplate: (info) =>
-            path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
-          // see https://github.com/webpack/webpack/issues/6642#issuecomment-370222543
-          globalObject: 'this'
-        },
         devServer: {
           client: {
-            overlay: true
+            overlay: {
+              errors: true,
+              warnings: false
+            }
           },
           allowedHosts: 'all',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': '*',
+            'Access-Control-Allow-Headers': '*'
+          },
           // Enable gzip compression of generated files
           compress: true,
           // Silence WebpackDevServer's own logs since they're generally not useful.
@@ -85,8 +81,6 @@ module.exports = () =>
           },
           onBeforeSetupMiddleware(devServer) {
             devServer.app.use(evalSourceMapMiddleware(devServer))
-            // This lets us open files from the runtime error overlay.
-            devServer.app.use(errorOverlayMiddleware())
           },
           onAfterSetupMiddleware(devServer) {
             // Redirect to `PUBLIC_URL` or `homepage` from `package.json` if url not match

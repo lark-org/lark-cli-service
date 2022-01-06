@@ -27,8 +27,8 @@ module.exports = () =>
           new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
-            filename: 'css/[name].[contenthash:8].css',
-            chunkFilename: 'css/[name].[contenthash:8].chunk.css',
+            filename: 'static/css/[name].[contenthash:8].css',
+            chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
             attributes: {
               onerror: '__STYLE_LOAD_ERROR__(event)'
             }
@@ -66,11 +66,20 @@ module.exports = () =>
         },
         output: {
           path: appBuild,
-          filename: 'js/[name].[chunkhash:8].js',
-          chunkFilename: 'js/[name].[chunkhash:8].chunk.js',
-          assetModuleFilename: 'static/media/[name].[hash][ext]',
+          pathinfo: false,
+          filename: 'static/js/[name].[chunkhash:8].js',
+          chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
+          assetModuleFilename: 'static/media/[name].[hash][ext][query]',
           devtoolModuleFilenameTemplate: (info) =>
             path.relative(appSrc, info.absoluteResourcePath).replace(/\\/g, '/')
+        },
+        resolve: {
+          alias: {
+            ...(isEnvProductionProfile && {
+              'react-dom$': 'react-dom/profiling',
+              'scheduler/tracing': 'scheduler/tracing-profiling'
+            })
+          }
         },
         optimization: {
           minimize: true,

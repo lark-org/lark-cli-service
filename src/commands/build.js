@@ -15,13 +15,14 @@ process.on('unhandledRejection', (err) => {
 const webpack = require('webpack')
 const fs = require('fs-extra')
 const chalk = require('chalk')
+const bfj = require('bfj')
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter')
 const printBuildError = require('react-dev-utils/printBuildError')
 const { checkBrowsers } = require('react-dev-utils/browsersHelper')
+const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages')
 
 const configFactory = require('../webpack/webpack.config.build')
 const { appPath, appBuild, appPublic, appHtml } = require('../variables/paths')
-const formatWebpackMessages = require('../dev-utils/formatWebpackMessages')
 
 const { measureFileSizesBeforeBuild, printFileSizesAfterBuild } =
   FileSizeReporter
@@ -83,21 +84,38 @@ function build(previousFileSizes) {
           process.env.CI.toLowerCase() !== 'false') &&
         messages.warnings.length
       ) {
-        console.log(
-          chalk.yellow(
-            '\nTreating warnings as errors because process.env.CI = true.\n' +
-              'Most CI servers set it automatically.\n'
-          )
+        // Ignore sourcemap warnings in CI builds. See #8227 for more info.
+        const filteredWarnings = messages.warnings.filter(
+          (w) => !/Failed to parse source map/.test(w)
         )
-
-        return reject(new Error(messages.warnings.join('\n\n')))
+        if (filteredWarnings.length) {
+          console.log(
+            chalk.yellow(
+              '\nTreating warnings as errors because process.env.CI = true.\n' +
+                'Most CI servers set it automatically.\n'
+            )
+          )
+          return reject(new Error(filteredWarnings.join('\n\n')))
+        }
       }
 
-      return resolve({
+      const resolveArgs = {
         stats,
         previousFileSizes,
         warnings: messages.warnings
-      })
+      }
+      const argv = process.argv.slice(2)
+      const writeStatsJson = argv.indexOf('--stats') !== -1
+
+      if (writeStatsJson) {
+        // eslint-disable-next-line promise/no-promise-in-callback
+        return bfj
+          .write(`${appBuild}/bundle-stats.json`, stats.toJson())
+          .then(() => resolve(resolveArgs))
+          .catch((error) => reject(new Error(error)))
+      }
+
+      return resolve(resolveArgs)
     })
   })
 }

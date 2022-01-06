@@ -7,8 +7,8 @@ const path = require('path')
 
 module.exports = (api) => {
   const projectBabelPath =
-    getProjectFilePath('.babel.config.js') ||
-    getProjectFilePath('babel.config.js')
+    getProjectFilePath('babel.config.js') ||
+    getProjectFilePath('.babel.config.js')
 
   let customBabelConfig = {}
   if (fs.existsSync(projectBabelPath)) {
@@ -52,5 +52,7 @@ module.exports = (api) => {
     ]
   }
 
-  return merge(config, customBabelConfig)
+  const mergedConfig = merge(config, customBabelConfig)
+
+  return mergedConfig
 }

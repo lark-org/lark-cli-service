@@ -6,6 +6,7 @@
   "bin": {
     "lark-cli-service": "./src/index.js"
   },
+  "types": "./src/lib/react-app.d.ts",
   "scripts": {
     "lint": "yarn lint:code && yarn lint:format",
     "lint:code": "eslint src --fix",
@@ -23,7 +24,8 @@
     "**/*": "prettier -w -u"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   },
   "repository": {
     "type": "git",
@@ -43,6 +45,7 @@
     "@babel/preset-react": "^7.16.5",
     "@babel/preset-typescript": "^7.16.5",
     "@babel/runtime-corejs2": "^7.16.5",
+    "@svgr/webpack": "^6.1.2",
     "babel-eslint": "10.1.0",
     "babel-jest": "^27.4.5",
     "babel-loader": "^8.2.3",
@@ -51,12 +54,14 @@
     "babel-plugin-macros": "^3.1.0",
     "babel-plugin-module-resolver": "^4.1.0",
     "babel-plugin-transform-react-remove-prop-types": "0.4.24",
+    "bfj": "^7.0.2",
     "case-sensitive-paths-webpack-plugin": "^2.4.0",
     "chalk": "^4.1.2",
     "check-dependencies": "^1.1.0",
     "css-loader": "^6.5.1",
     "css-minimizer-webpack-plugin": "^3.3.0",
     "deepmerge": "4.2.2",
+    "file-loader": "^6.2.0",
     "fs-extra": "^10.0.0",
     "html-webpack-plugin": "^5.5.0",
     "less": "^4.1.2",
@@ -69,7 +74,7 @@
     "postcss-normalize": "^10.0.1",
     "postcss-preset-env": "^7.0.2",
     "postcss-safe-parser": "^6.0.0",
-    "react-dev-utils": "11.0.4",
+    "react-dev-utils": "^12.0.0",
     "resolve-url-loader": "^4.0.0",
     "sass": "^1.45.0",
     "sass-loader": "^12.4.0",
