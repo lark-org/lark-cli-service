@@ -44,7 +44,7 @@
     "@babel/preset-env": "^7.16.5",
     "@babel/preset-react": "^7.16.5",
     "@babel/preset-typescript": "^7.16.5",
-    "@babel/runtime-corejs2": "^7.16.5",
+    "@babel/runtime-corejs2": "^7.16.7",
     "@svgr/webpack": "^6.1.2",
     "babel-eslint": "10.1.0",
     "babel-jest": "^27.4.5",
