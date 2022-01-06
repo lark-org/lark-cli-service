@@ -4,6 +4,7 @@ const resolve = require('resolve')
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 const fs = require('fs-extra')
 
@@ -17,6 +18,11 @@ const InterpolateHtmlPlugin = require('../webpack-plugins/interpolate-html-plugi
 const { appIndex, appSrc, appHtml, appPolyfill } = require('../variables/paths')
 const variables = require('../variables/variables')
 const paths = require('../variables/paths')
+
+const reactRefreshRuntimeEntry = require.resolve('react-refresh/runtime')
+const reactRefreshWebpackPluginRuntimeEntry = require.resolve(
+  '@pmmmwh/react-refresh-webpack-plugin'
+)
 
 const { __DEV__, PUBLIC_PATH: publicPath, APP_ENV } = variables
 const stringified = Object.keys(variables).reduce(
@@ -155,7 +161,19 @@ module.exports = ({ entry = [], plugins = [] }) => {
         '@': appSrc,
         src: appSrc
       },
-      extensions: ['.ts', '.tsx', '.jsx', '.js', '.scss', '.sass', '.less']
+      extensions: ['.ts', '.tsx', '.jsx', '.js', '.scss', '.sass', '.less'],
+      plugins: [
+        // Prevents users from importing files from outside of src/ (or node_modules/).
+        // This often causes confusion because we only process files within src/ with babel.
+        // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
+        // please link the files into your node_modules/ and let module-resolution kick in.
+        // Make sure your source files are compiled, as they will not be processed in any way.
+        new ModuleScopePlugin(paths.appSrc, [
+          paths.appPackageJson,
+          reactRefreshRuntimeEntry,
+          reactRefreshWebpackPluginRuntimeEntry
+        ])
+      ]
     },
     module: {
       strictExportPresence: true,
