@@ -60,15 +60,13 @@ module.exports = () =>
         externals: {
           // prettier-ignore
           react: 'React',
-          'react-dom': 'ReactDOM',
-          mobx: 'mobx',
-          'mobx-react': 'mobxReact'
+          'react-dom': 'ReactDOM'
         },
         output: {
           path: appBuild,
           pathinfo: false,
-          filename: 'static/js/[name].[chunkhash:8].js',
-          chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
+          filename: 'static/js/[name].[contenthash:8].js',
+          chunkFilename: 'static/js/[name].[contenthash:8].chunk.js',
           assetModuleFilename: 'static/media/[name].[hash][ext][query]',
           devtoolModuleFilenameTemplate: (info) =>
             path.relative(appSrc, info.absoluteResourcePath).replace(/\\/g, '/')
