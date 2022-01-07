@@ -3,13 +3,11 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const { SourceMapDevToolPlugin } = require('webpack')
 const { merge } = require('webpack-merge')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const safePostCssParser = require('postcss-safe-parser')
 const StyleExtHtmlWebpackPlugin = require('../webpack-plugins/style-ext-html-webpack-plugin')
 const { appSrc, appBuild } = require('../variables/paths')
-const { PUBLIC_PATH } = require('../variables/variables')
 const configFactory = require('./webpack.config')
 const { processWebpackConfig } = require('../utils/custom-config')
 
@@ -20,10 +18,6 @@ module.exports = () =>
     merge(
       configFactory({
         plugins: [
-          new SourceMapDevToolPlugin({
-            filename: '[file].map',
-            publicPath: PUBLIC_PATH
-          }),
           new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
