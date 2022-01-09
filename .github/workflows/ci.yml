@@ -58,7 +58,7 @@ jobs:
         with:
           branches: |
             [
-              'main',
+              'master',
               'next',
               {
                 name: 'beta',
