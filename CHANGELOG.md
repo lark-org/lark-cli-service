@@ -1,3 +1,11 @@
+## [2.3.2](https://github.com/lark-org/lark-cli-service/compare/v2.3.1...v2.3.2) (2022-01-09)
+
+
+### Bug Fixes
+
+* 🐛 移除 sourcemap ([55f4903](https://github.com/lark-org/lark-cli-service/commit/55f49030014c8e65957f5161bcc36253ff7d49a0))
+* **ci:** trigger branchs ([0c83bcb](https://github.com/lark-org/lark-cli-service/commit/0c83bcb5264a4fc20e64ea857e28006770277de5))
+
 ## [2.2.1](https://github.com/lark-org/lark-cli-service/compare/v2.2.0...v2.2.1) (2021-11-18)
 
 # [2.2.0](https://github.com/lark-org/lark-cli-service/compare/v2.1.0...v2.2.0) (2021-11-16)
