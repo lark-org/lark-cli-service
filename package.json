@@ -32,7 +32,6 @@
     "url": "git@github.com:lark-org/lark-cli-service.git"
   },
   "dependencies": {
-    "@babel/cli": "^7.16.7",
     "@babel/core": "^7.16.7",
     "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/plugin-proposal-decorators": "^7.16.7",
@@ -44,7 +43,6 @@
     "@babel/preset-env": "^7.16.7",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
-    "@babel/runtime-corejs2": "^7.16.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",
     "@svgr/webpack": "^6.1.2",
     "babel-eslint": "10.1.0",

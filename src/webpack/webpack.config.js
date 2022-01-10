@@ -15,7 +15,8 @@ const ForkTsCheckerWebpackPlugin =
 const postcssNormalize = require('postcss-normalize')
 
 const InterpolateHtmlPlugin = require('../webpack-plugins/interpolate-html-plugin')
-const { appIndex, appSrc, appHtml, appPolyfill } = require('../variables/paths')
+const createEnvironmentHash = require('../utils/createEnvironmentHash')
+
 const variables = require('../variables/variables')
 const paths = require('../variables/paths')
 
@@ -25,6 +26,8 @@ const reactRefreshWebpackPluginRuntimeEntry = require.resolve(
 )
 
 const { __DEV__, PUBLIC_PATH: publicPath, APP_ENV } = variables
+const { appIndex, appSrc, appHtml, appPolyfill } = paths
+
 const stringified = Object.keys(variables).reduce(
   (acc, key) => {
     acc[key] = JSON.stringify(variables[key])
@@ -279,8 +282,11 @@ module.exports = ({ entry = [], plugins = [] }) => {
               include: [appSrc],
               loader: require.resolve('babel-loader'),
               options: {
-                cacheDirectory: false,
-                highlightCode: true,
+                babelrc: false,
+                cacheDirectory: true,
+                // See #6846 for context on why cacheCompression is disabled
+                cacheCompression: false,
+                compact: !__DEV__,
                 configFile: require.resolve('../.babel.config.js')
               }
             },
@@ -329,7 +335,7 @@ module.exports = ({ entry = [], plugins = [] }) => {
     },
     cache: {
       type: 'filesystem',
-      version: APP_ENV,
+      version: createEnvironmentHash(variables),
       cacheDirectory: paths.appWebpackCache,
       store: 'pack',
       buildDependencies: {
