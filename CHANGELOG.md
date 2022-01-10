@@ -1,3 +1,10 @@
+## [2.3.3](https://github.com/lark-org/lark-cli-service/compare/v2.3.2...v2.3.3) (2022-01-10)
+
+
+### Bug Fixes
+
+* 🐛 解决babel兼容覆盖模式 ([113c40e](https://github.com/lark-org/lark-cli-service/commit/113c40edc23d4406e33e6f2ed3281db7a1e7835f))
+
 ## [2.3.2](https://github.com/lark-org/lark-cli-service/compare/v2.3.1...v2.3.2) (2022-01-09)
 
 
