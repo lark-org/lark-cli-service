@@ -96,7 +96,7 @@
     "eslint-config-lark": "^0.4.0",
     "husky": "^7.0.4",
     "lint-staged": "^12.0.2",
-    "prettier": "^2.6.0",
+    "prettier": "^2.6.1",
     "typescript": "^4.6.2"
   }
 }
