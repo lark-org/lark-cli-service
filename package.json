@@ -46,7 +46,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@svgr/webpack": "^6.2.1",
     "babel-eslint": "10.1.0",
-    "babel-jest": "^27.5.1",
+    "babel-jest": "^28.1.1",
     "babel-loader": "^8.2.5",
     "babel-plugin-import": "^1.13.5",
     "babel-plugin-lodash": "3.3.4",
