@@ -1,3 +1,10 @@
+# [2.4.0](https://github.com/lark-org/lark-cli-service/compare/v2.3.3...v2.4.0) (2022-06-29)
+
+
+### Features
+
+* 开发环境增加配置支持mfsu以快速构建和更新 ([33c60bd](https://github.com/lark-org/lark-cli-service/commit/33c60bd8fe44eb34fe31bee958bfecbd9b095674))
+
 ## [2.3.3](https://github.com/lark-org/lark-cli-service/compare/v2.3.2...v2.3.3) (2022-01-10)
 
 
