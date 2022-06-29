@@ -12,7 +12,7 @@ const ForkTsCheckerWebpackPlugin =
     ? require('react-dev-utils/ForkTsCheckerWarningWebpackPlugin')
     : require('react-dev-utils/ForkTsCheckerWebpackPlugin')
 const postcssNormalize = require('postcss-normalize')
-const mfsu = require('../webpack-plugins/mfsu')
+// const mfsu = require('../webpack-plugins/mfsu')
 
 const InterpolateHtmlPlugin = require('../webpack-plugins/interpolate-html-plugin')
 const createEnvironmentHash = require('../utils/createEnvironmentHash')
@@ -121,11 +121,11 @@ function getScriptLoader() {
     loader: require.resolve('esbuild-loader'),
     exclude: /node_modules/,
     options: {
-      handler: [
-        // // [mfsu] 3. add mfsu esbuild loader handlers
-        ...(MFSU_ENABLED ? mfsu.getEsbuildLoaderHandler() : [])
-      ],
-      // loader: 'tsx',
+      // handler: [
+      //   // // [mfsu] 3. add mfsu esbuild loader handlers
+      //   ...(MFSU_ENABLED ? mfsu.getEsbuildLoaderHandler() : [])
+      // ],
+      loader: 'tsx',
       target: 'esnext',
       implementation: require('esbuild'),
       ...transpilerOptions
