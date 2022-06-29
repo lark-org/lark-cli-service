@@ -7,18 +7,19 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 const fs = require('fs-extra')
-const esbuild = require('esbuild')
 const ForkTsCheckerWebpackPlugin =
   process.env.TSC_COMPILE_ON_ERROR === 'true'
     ? require('react-dev-utils/ForkTsCheckerWarningWebpackPlugin')
     : require('react-dev-utils/ForkTsCheckerWebpackPlugin')
 const postcssNormalize = require('postcss-normalize')
+const mfsu = require('../webpack-plugins/mfsu')
 
 const InterpolateHtmlPlugin = require('../webpack-plugins/interpolate-html-plugin')
 const createEnvironmentHash = require('../utils/createEnvironmentHash')
 
 const variables = require('../variables/variables')
 const paths = require('../variables/paths')
+const builds = require('../variables/builds')
 
 const reactRefreshRuntimeEntry = require.resolve('react-refresh/runtime')
 const reactRefreshWebpackPluginRuntimeEntry = require.resolve(
@@ -27,7 +28,11 @@ const reactRefreshWebpackPluginRuntimeEntry = require.resolve(
 
 const { __DEV__, PUBLIC_PATH: publicPath, APP_ENV } = variables
 const { appIndex, appSrc, appHtml, appPolyfill } = paths
+const { mfsu: MFSU_ENABLED, transpiler, transpilerOptions } = builds
 
+const tsconfigRaw = [paths.appTsConfig, paths.appJsConfig].filter((f) =>
+  fs.existsSync(f)
+)
 const stringified = Object.keys(variables).reduce(
   (acc, key) => {
     acc[key] = JSON.stringify(variables[key])
@@ -111,23 +116,40 @@ function getStyleLoaders(external) {
   return getLoaders()
 }
 
-// function getJSLoader() {
-//   const esbLoader = {
-//     test: /\.[jt]sx?$/,
-//     exclude: /node_modules/,
-//     use: {
-//       loader: esbuildLoader,
-//       options: {
-//         handler: [
-//           // // [mfsu] 3. add mfsu esbuild loader handlers
-//           // ...mfsu.getEsbuildLoaderHandler()
-//         ],
-//         target: 'esnext',
-//         implementation: esbuild
-//       }
-//     }
-//   }
-// }
+function getScriptLoader() {
+  const esbLoader = {
+    loader: require.resolve('esbuild-loader'),
+    exclude: /node_modules/,
+    options: {
+      handler: [
+        // // [mfsu] 3. add mfsu esbuild loader handlers
+        ...(MFSU_ENABLED ? mfsu.getEsbuildLoaderHandler() : [])
+      ],
+      // loader: 'tsx',
+      target: 'esnext',
+      implementation: require('esbuild'),
+      ...transpilerOptions
+    }
+  }
+  const babel = {
+    loader: require.resolve('babel-loader'),
+    options: {
+      babelrc: false,
+      cacheDirectory: true,
+      // See #6846 for context on why cacheCompression is disabled
+      cacheCompression: false,
+      compact: !__DEV__,
+      configFile: require.resolve('../.babel.config.js'),
+      ...transpilerOptions
+    }
+  }
+
+  if (transpiler === 'esbuild' && __DEV__) {
+    return esbLoader
+  }
+
+  return babel
+}
 
 module.exports = ({ entry = [], plugins = [] }) => {
   let minify
@@ -301,15 +323,7 @@ module.exports = ({ entry = [], plugins = [] }) => {
             {
               test: /\.(js|jsx|ts|tsx)$/,
               include: [appSrc],
-              loader: require.resolve('babel-loader'),
-              options: {
-                babelrc: false,
-                cacheDirectory: true,
-                // See #6846 for context on why cacheCompression is disabled
-                cacheCompression: false,
-                compact: !__DEV__,
-                configFile: require.resolve('../.babel.config.js')
-              }
+              ...getScriptLoader()
             },
             {
               test: /\.wjs$/,
@@ -362,9 +376,7 @@ module.exports = ({ entry = [], plugins = [] }) => {
       buildDependencies: {
         defaultWebpack: ['webpack/lib/'],
         config: [__filename],
-        tsconfig: [paths.appTsConfig, paths.appJsConfig].filter((f) =>
-          fs.existsSync(f)
-        )
+        tsconfig: tsconfigRaw
       }
     },
     stats: {

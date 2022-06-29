@@ -9,11 +9,9 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const mfsu = require('../webpack-plugins/mfsu')
 
 const { appPublic, appSrc } = require('../variables/paths')
-const {
-  PUBLIC_PATH,
-  FAST_REFRESH,
-  MFSU: MFSU_ENABLED
-} = require('../variables/variables')
+const { PUBLIC_PATH, FAST_REFRESH } = require('../variables/variables')
+const { mfsu: MFSU_ENABLED } = require('../variables/builds')
+
 const configFactory = require('./webpack.config')
 const { processWebpackConfig } = require('../utils/custom-config')
 

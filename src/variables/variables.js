@@ -24,10 +24,15 @@ try {
 } catch (error) {
   // EMPTY
 }
-
-const customVariables = getCustomConfig().variables
+const customConfig = getCustomConfig()
+const customVariables = customConfig.variables
+const buildOptions = customConfig.build
 const RELEASE = GIT_COMMIT_SHA.substr(0, 7)
 const buildTime = new Date()
+const esbuild = {
+  enable: false,
+  options: {}
+}
 const variables = {
   __DEV__,
   GIT_COMMIT_SHA,
@@ -40,8 +45,9 @@ const variables = {
   CLI_VERSION: pkg.version,
   BUILD_TIME: `${buildTime.toLocaleDateString()} ${buildTime.toLocaleTimeString()}`,
   APP_LOG: true,
-  MFSU: false,
   FAST_REFRESH: process.env.FAST_REFRESH !== 'false',
+  ...esbuild,
+  ...buildOptions,
   ...customVariables
 }
 

@@ -18,10 +18,8 @@ const {
 } = require('react-dev-utils/WebpackDevServerUtils')
 const { checkBrowsers } = require('react-dev-utils/browsersHelper')
 const configFactory = require('../webpack/webpack.config.dev')
-const {
-  APP_NAME: appName,
-  MFSU: MFSU_ENABLED
-} = require('../variables/variables')
+const { APP_NAME: appName } = require('../variables/variables')
+const { mfsu: MFSU_ENABLED } = require('../variables/builds')
 const { appPath, appTsConfig, yarnLockFile } = require('../variables/paths')
 const mfsu = require('../webpack-plugins/mfsu')
 

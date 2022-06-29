@@ -33,6 +33,7 @@ specifiers:
   css-minimizer-webpack-plugin: ^3.4.1
   deepmerge: 4.2.2
   esbuild: ^0.14.47
+  esbuild-loader: ^2.19.0
   eslint: 7.32.0
   eslint-config-lark: ^0.4.0
   file-loader: ^6.2.0
@@ -98,6 +99,7 @@ dependencies:
   css-minimizer-webpack-plugin: 3.4.1_esbuild@0.14.47+webpack@5.73.0
   deepmerge: 4.2.2
   esbuild: 0.14.47
+  esbuild-loader: 2.19.0_webpack@5.73.0
   file-loader: 6.2.0_webpack@5.73.0
   fs-extra: 10.1.0
   html-webpack-plugin: 5.5.0_webpack@5.73.0
@@ -5604,6 +5606,23 @@ packages:
     dev: false
     optional: true
 
+  /esbuild-loader/2.19.0_webpack@5.73.0:
+    resolution:
+      {
+        integrity: sha512-urGNVE6Tl2rqx92ElKi/LiExXjGvcH6HfDBFzJ9Ppwqh4n6Jmx8x7RKAyMzSM78b6CAaJLhDncG5sPrL0ROh5Q==
+      }
+    peerDependencies:
+      webpack: ^4.40.0 || ^5.0.0
+    dependencies:
+      esbuild: 0.14.47
+      joycon: 3.1.1
+      json5: 2.2.1
+      loader-utils: 2.0.2
+      tapable: 2.2.1
+      webpack: 5.73.0_esbuild@0.14.47
+      webpack-sources: 2.3.1
+    dev: false
+
   /esbuild-netbsd-64/0.14.36:
     resolution:
       {
@@ -7942,6 +7961,14 @@ packages:
       '@types/node': 18.0.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
+    dev: false
+
+  /joycon/3.1.1:
+    resolution:
+      {
+        integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==
+      }
+    engines: { node: '>=10' }
     dev: false
 
   /js-tokens/4.0.0:
@@ -12468,6 +12495,17 @@ packages:
       {
         integrity: sha512-lgTS3Xhv1lCOKo7SA5TjKXMjpSM4sBjNV5+q2bqesbSPs5FjGmU6jjtBSkX9b4qW87vDIsCIlUPOEhbZrMdjeQ==
       }
+    dependencies:
+      source-list-map: 2.0.1
+      source-map: 0.6.1
+    dev: false
+
+  /webpack-sources/2.3.1:
+    resolution:
+      {
+        integrity: sha512-y9EI9AO42JjEcrTJFOYmVywVZdKVUfOvDUPsJea5GIr1JOEGFVqwlY2K098fFoIjOkDzHn2AjRvM8dsBZu+gCA==
+      }
+    engines: { node: '>=10.13.0' }
     dependencies:
       source-list-map: 2.0.1
       source-map: 0.6.1
