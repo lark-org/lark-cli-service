@@ -7,7 +7,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 const fs = require('fs-extra')
-
+const esbuild = require('esbuild')
 const ForkTsCheckerWebpackPlugin =
   process.env.TSC_COMPILE_ON_ERROR === 'true'
     ? require('react-dev-utils/ForkTsCheckerWarningWebpackPlugin')
@@ -111,6 +111,24 @@ function getStyleLoaders(external) {
   return getLoaders()
 }
 
+// function getJSLoader() {
+//   const esbLoader = {
+//     test: /\.[jt]sx?$/,
+//     exclude: /node_modules/,
+//     use: {
+//       loader: esbuildLoader,
+//       options: {
+//         handler: [
+//           // // [mfsu] 3. add mfsu esbuild loader handlers
+//           // ...mfsu.getEsbuildLoaderHandler()
+//         ],
+//         target: 'esnext',
+//         implementation: esbuild
+//       }
+//     }
+//   }
+// }
+
 module.exports = ({ entry = [], plugins = [] }) => {
   let minify
 
@@ -130,7 +148,10 @@ module.exports = ({ entry = [], plugins = [] }) => {
   }
 
   return {
-    entry: [...entry, appPolyfill, appIndex],
+    // entry: appIndex,
+    entry: {
+      app: [...entry, appPolyfill, appIndex]
+    },
     output: {
       path: paths.appBuild,
       pathinfo: __DEV__,

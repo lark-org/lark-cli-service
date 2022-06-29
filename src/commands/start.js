@@ -18,8 +18,12 @@ const {
 } = require('react-dev-utils/WebpackDevServerUtils')
 const { checkBrowsers } = require('react-dev-utils/browsersHelper')
 const configFactory = require('../webpack/webpack.config.dev')
-const { APP_NAME: appName } = require('../variables/variables')
+const {
+  APP_NAME: appName,
+  MFSU: MFSU_ENABLED
+} = require('../variables/variables')
 const { appPath, appTsConfig, yarnLockFile } = require('../variables/paths')
+const mfsu = require('../webpack-plugins/mfsu')
 
 const isInteractive = process.stdout.isTTY
 
@@ -52,8 +56,20 @@ module.exports = async (defaultPort) => {
       return
     }
 
+    // eslint-disable-next-line no-inner-declarations
+    async function getDevConfig() {
+      const config = configFactory()
+
+      if (MFSU_ENABLED) {
+        await mfsu.setWebpackConfig({
+          config
+        })
+      }
+      return config
+    }
+
     const urls = prepareUrls('http', HOST, port)
-    const config = configFactory()
+    const config = await getDevConfig()
     const useTypeScript = fs.existsSync(appTsConfig)
     const useYarn = fs.existsSync(yarnLockFile)
     const compiler = createCompiler({
@@ -93,6 +109,7 @@ module.exports = async (defaultPort) => {
       })
     }
   } catch (err) {
+    console.log(err)
     if (err && err.message) {
       console.log(err.message)
     }

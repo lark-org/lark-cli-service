@@ -6,11 +6,20 @@ const noopServiceWorkerMiddleware = require('react-dev-utils/noopServiceWorkerMi
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const evalSourceMapMiddleware = require('react-dev-utils/evalSourceMapMiddleware')
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
+const mfsu = require('../webpack-plugins/mfsu')
 
 const { appPublic, appSrc } = require('../variables/paths')
-const { PUBLIC_PATH, FAST_REFRESH } = require('../variables/variables')
+const {
+  PUBLIC_PATH,
+  FAST_REFRESH,
+  MFSU: MFSU_ENABLED
+} = require('../variables/variables')
 const configFactory = require('./webpack.config')
 const { processWebpackConfig } = require('../utils/custom-config')
+
+const sockHost = process.env.WDS_SOCKET_HOST
+const sockPath = process.env.WDS_SOCKET_PATH // default: '/ws'
+const sockPort = process.env.WDS_SOCKET_PORT
 
 module.exports = () =>
   processWebpackConfig(
@@ -30,6 +39,11 @@ module.exports = () =>
         devtool: 'cheap-module-source-map',
         devServer: {
           client: {
+            webSocketURL: {
+              hostname: sockHost,
+              pathname: sockPath,
+              port: sockPort
+            },
             overlay: {
               errors: true,
               warnings: false
@@ -84,6 +98,12 @@ module.exports = () =>
             index: PUBLIC_PATH
           },
           onBeforeSetupMiddleware(devServer) {
+            if (MFSU_ENABLED && mfsu) {
+              // eslint-disable-next-line no-restricted-syntax
+              for (const middleware of mfsu.getMiddlewares()) {
+                devServer.app.use(middleware)
+              }
+            }
             devServer.app.use(evalSourceMapMiddleware(devServer))
           },
           onAfterSetupMiddleware(devServer) {

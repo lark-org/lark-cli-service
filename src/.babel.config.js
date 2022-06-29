@@ -2,7 +2,11 @@ const { getProjectFilePath } = require('./utils/path')
 const merge = require('deepmerge')
 const fs = require('fs')
 const path = require('path')
-const { FAST_REFRESH: shouldUseReactRefresh } = require('./variables/variables')
+const {
+  FAST_REFRESH: shouldUseReactRefresh,
+  MFSU: shouldUseMFSURefresh
+} = require('./variables/variables')
+const mfsu = require('./webpack-plugins/mfsu')
 
 // TODO: 作为一个 preset 的方式大概会更好
 
@@ -19,7 +23,8 @@ module.exports = (api) => {
   if ((BABEL_ENV || NODE_ENV) === 'development') {
     environment = [
       shouldUseReactRefresh && require.resolve('react-refresh/babel'),
-      ['@babel/plugin-syntax-dynamic-import']
+      ['@babel/plugin-syntax-dynamic-import'],
+      ...(shouldUseMFSURefresh ? mfsu.getBabelPlugins() : [])
     ].filter(Boolean)
   } else {
     environment = [
