@@ -63,6 +63,7 @@
     "deepmerge": "4.2.2",
     "esbuild": "^0.14.47",
     "esbuild-loader": "^2.19.0",
+    "escape-string-regexp": "^5.0.0",
     "file-loader": "^6.2.0",
     "fs-extra": "^10.1.0",
     "html-webpack-plugin": "^5.5.0",

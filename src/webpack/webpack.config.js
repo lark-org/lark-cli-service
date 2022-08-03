@@ -1,4 +1,5 @@
 /* eslint-disable global-require */
+/* eslint-disable import/no-unresolved  */
 const webpack = require('webpack')
 const resolve = require('resolve')
 const path = require('path')
@@ -28,7 +29,7 @@ const reactRefreshWebpackPluginRuntimeEntry = require.resolve(
 
 const { __DEV__, PUBLIC_PATH: publicPath, APP_ENV } = variables
 const { appIndex, appSrc, appHtml, appPolyfill } = paths
-const { mfsu: MFSU_ENABLED, transpiler, transpilerOptions } = builds
+const { transpiler, transpilerOptions } = builds
 
 const tsconfigRaw = [paths.appTsConfig, paths.appJsConfig].filter((f) =>
   fs.existsSync(f)
