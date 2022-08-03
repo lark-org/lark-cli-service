@@ -8,7 +8,7 @@
   },
   "types": "./src/lib/react-app.d.ts",
   "scripts": {
-    "lint": "yarn lint:code && yarn lint:format",
+    "lint": "pnpm run lint:code && pnpm run lint:format",
     "lint:code": "eslint src --fix",
     "lint:format": "prettier --write .",
     "prepare": "husky install"

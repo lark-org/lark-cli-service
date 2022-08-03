@@ -1,24 +1,21 @@
 # [2.4.0](https://github.com/lark-org/lark-cli-service/compare/v2.3.3...v2.4.0) (2022-06-29)
 
-
 ### Features
 
-* 开发环境增加配置支持mfsu以快速构建和更新 ([33c60bd](https://github.com/lark-org/lark-cli-service/commit/33c60bd8fe44eb34fe31bee958bfecbd9b095674))
+- 开发环境增加配置支持 mfsu 以快速构建和更新 ([33c60bd](https://github.com/lark-org/lark-cli-service/commit/33c60bd8fe44eb34fe31bee958bfecbd9b095674))
 
 ## [2.3.3](https://github.com/lark-org/lark-cli-service/compare/v2.3.2...v2.3.3) (2022-01-10)
 
-
 ### Bug Fixes
 
-* 🐛 解决babel兼容覆盖模式 ([113c40e](https://github.com/lark-org/lark-cli-service/commit/113c40edc23d4406e33e6f2ed3281db7a1e7835f))
+- 🐛 解决 babel 兼容覆盖模式 ([113c40e](https://github.com/lark-org/lark-cli-service/commit/113c40edc23d4406e33e6f2ed3281db7a1e7835f))
 
 ## [2.3.2](https://github.com/lark-org/lark-cli-service/compare/v2.3.1...v2.3.2) (2022-01-09)
 
-
 ### Bug Fixes
 
-* 🐛 移除 sourcemap ([55f4903](https://github.com/lark-org/lark-cli-service/commit/55f49030014c8e65957f5161bcc36253ff7d49a0))
-* **ci:** trigger branchs ([0c83bcb](https://github.com/lark-org/lark-cli-service/commit/0c83bcb5264a4fc20e64ea857e28006770277de5))
+- 🐛 移除 sourcemap ([55f4903](https://github.com/lark-org/lark-cli-service/commit/55f49030014c8e65957f5161bcc36253ff7d49a0))
+- **ci:** trigger branchs ([0c83bcb](https://github.com/lark-org/lark-cli-service/commit/0c83bcb5264a4fc20e64ea857e28006770277de5))
 
 ## [2.2.1](https://github.com/lark-org/lark-cli-service/compare/v2.2.0...v2.2.1) (2021-11-18)
 
