@@ -1,3 +1,10 @@
+## [2.4.5](https://github.com/lark-org/lark-cli-service/compare/v2.4.4...v2.4.5) (2022-08-03)
+
+
+### Bug Fixes
+
+* 添加缺少的babel runtime ([e2539d0](https://github.com/lark-org/lark-cli-service/commit/e2539d0ecd0e0e862a00588f478c18a499976c7d))
+
 ## [2.4.4](https://github.com/lark-org/lark-cli-service/compare/v2.4.3...v2.4.4) (2022-08-03)
 
 
