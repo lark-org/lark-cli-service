@@ -1,3 +1,10 @@
+## [2.4.4](https://github.com/lark-org/lark-cli-service/compare/v2.4.3...v2.4.4) (2022-08-03)
+
+
+### Bug Fixes
+
+* esm require ([22631d0](https://github.com/lark-org/lark-cli-service/commit/22631d039a4dfe478cb842f94b3b69c8c5c1afbc))
+
 ## [2.4.3](https://github.com/lark-org/lark-cli-service/compare/v2.4.2...v2.4.3) (2022-08-03)
 
 
