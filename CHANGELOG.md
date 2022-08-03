@@ -1,3 +1,14 @@
+## [2.4.3](https://github.com/lark-org/lark-cli-service/compare/v2.4.2...v2.4.3) (2022-08-03)
+
+
+### Bug Fixes
+
+* ci cache ([2cf4804](https://github.com/lark-org/lark-cli-service/commit/2cf4804f585a6501da2dba2043bea62c7de4a484))
+* deps require error ([223e6b0](https://github.com/lark-org/lark-cli-service/commit/223e6b0ee6b634a45d76f28d9fc50c7c7ea2ff41))
+* import/no-unresolved rule ([98c3f07](https://github.com/lark-org/lark-cli-service/commit/98c3f0722d175935aaa68fc84965dc6497af6d0d))
+* lint error ([d561891](https://github.com/lark-org/lark-cli-service/commit/d56189124b45719a5ebec2469a2e92b6d635e88e))
+* 修改github workflow ([1084fde](https://github.com/lark-org/lark-cli-service/commit/1084fde5abbb656403e2db024224beb35b2d5025))
+
 # [2.4.0](https://github.com/lark-org/lark-cli-service/compare/v2.3.3...v2.4.0) (2022-06-29)
 
 ### Features
