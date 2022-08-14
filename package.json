@@ -62,7 +62,7 @@
     "css-loader": "^6.7.1",
     "css-minimizer-webpack-plugin": "^3.4.1",
     "deepmerge": "4.2.2",
-    "esbuild": "^0.14.47",
+    "esbuild": "^0.15.2",
     "esbuild-loader": "^2.19.0",
     "escape-string-regexp": "4.0.0",
     "file-loader": "^6.2.0",
